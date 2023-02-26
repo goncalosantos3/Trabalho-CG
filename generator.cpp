@@ -11,7 +11,7 @@ using namespace std;
 void geraPlano(float len, float div, char *file){
     ofstream f(file);
 
-    Forma forma = new Forma();
+    Forma* forma = new Forma();
 
     float ref = len / 2;
     float x = -ref, y = 0, z = -ref;
@@ -21,13 +21,13 @@ void geraPlano(float len, float div, char *file){
     {
         for (; x < ref; x += ladoQua)
         {
-            forma->addPonto(new Ponto(x, y, z));
-            forma->addPonto(new Ponto(x, y, z+ladoQua));
-            forma->addPonto(new Ponto(x+ladoQua, y, z+ladoQua));
+            forma->adicionarPonto(Ponto(x, y, z));
+            forma->adicionarPonto(Ponto(x, y, z+ladoQua));
+            forma->adicionarPonto(Ponto(x+ladoQua, y, z+ladoQua));
 
-            forma->addPonto(new Ponto(x, y, z));
-            forma->addPonto(new Ponto(x + ladoQua, y, z + ladoQua));
-            forma->addPonto(new Ponto(x+ladoQua, y, z));
+            forma->adicionarPonto(Ponto(x, y, z));
+            forma->adicionarPonto(Ponto(x + ladoQua, y, z + ladoQua));
+            forma->adicionarPonto(Ponto(x+ladoQua, y, z));
         }
     }
 

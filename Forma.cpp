@@ -2,12 +2,12 @@
 
 void Forma::adicionarPonto(Ponto p)
 {
-	this->pontos.push_back(Ponto);
+	this->pontos.push_back(p);
 }
 
-std::ostream& Forma::operator<<(std::ostream& stream, const Forma& vec)
+std::ostream& operator<<(std::ostream& stream, const Forma& forma)
 {
-	for (Ponto ponto : this->pontos)
-		stream << ponto.getX() << " " << ponto.getY << " " << ponto.getZ() << "\n";
+	for (Ponto ponto : forma.pontos)
+		stream << ponto.getX() << " " << ponto.getY() << " " << ponto.getZ() << "\n";
 	return stream;
 }
