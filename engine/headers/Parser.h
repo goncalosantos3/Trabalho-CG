@@ -7,24 +7,28 @@
 #include "Camera.h"
 #include "Forma.h"
 #include "Ponto.h"
+#include "rapidxml.hpp"
 
 class Parser
 {
 private:
-    std::pair<float, float> world;
+    std::pair<float, float> window;
     Camera* camera;
-    std::vector<Forma> models;
+    std::vector<Forma*> models;
+    // static string filesDirectory;
 
 public:
     Parser(){};
     ~Parser(){};
 
-    int parseWorld(std::string input);
-    int parseCamera(std::string input);
-    int parseGroup(std::string input);
+    int parseWindow(rapidxml::xml_node<>* windowNode);
+    int parseCamera(rapidxml::xml_node<>* cameraNode);
+    int parseGroup(rapidxml::xml_node<>* groupNode);
     int parseXML(char *filePath);
 
-    std::pair<float, float> getWorld();
+    int parseModel(char *filePath);
+
+    std::pair<float, float> getWindow();
     Camera* getCamera();
-    std::vector<Forma> getModels();
+    std::vector<Forma*> getModels();
 };

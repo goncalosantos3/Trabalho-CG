@@ -1,0 +1,3 @@
+﻿  engine.cpp
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\engine.cpp(32,21): warning C4018: '<': incompatibilidade de signed/unsigned
+  engine.vcxproj -> C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Release\engine.exe

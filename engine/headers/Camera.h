@@ -25,4 +25,11 @@ public:
     float getFov();
     float getNear();
     float getFar();
+
+    void setPosition(Ponto* position);
+    void setLookAt(Ponto* lookAt);
+    void setUp(Ponto* up);
+    void setFov(float fov);
+    void setNear(float near);
+    void setFar(float far);
 };

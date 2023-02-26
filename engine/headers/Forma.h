@@ -17,4 +17,6 @@ public:
 	void adicionarPonto(Ponto p);
 	friend std::ostream& operator<<(std::ostream& stream, const Forma& vec);
 	void escreveFicheiro(char *file);
+
+	std::vector<Ponto> getPontos();
 };

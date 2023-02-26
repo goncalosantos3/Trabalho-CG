@@ -1,4 +1,4 @@
-#include "Forma.h"
+#include "headers/Forma.h"
 
 void Forma::adicionarPonto(Ponto p)
 {
@@ -20,4 +20,9 @@ void Forma::escreveFicheiro (char *file)
 		f << ponto.getX() << ", " << ponto.getY() << ", " << ponto.getZ() << "\n";
 
 	f.close();
+}
+
+std::vector<Ponto> Forma::getPontos()
+{
+	return this->pontos;
 }

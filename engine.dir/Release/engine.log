@@ -1,0 +1,48 @@
+﻿  Parser.cpp
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(38,103): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(38,77): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(38,51): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(52,101): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(52,75): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(52,49): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(66,97): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(66,71): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(66,45): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(80,36): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(81,37): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(82,36): warning C4244: 'argumento': conversão de 'double' para 'float', possível perda de dados
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(147,13): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\utility(172,16): warning C4244: 'inicializando': conversão de '_Ty' para '_Ty1', possível perda de dados
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty1=float
+          ]
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(17,97): message : consulte a referência à instanciação 'std::pair<float,float>::pair<double,double,0>(_Other1 &&,_Other2 &&) noexcept' do modelo que está sendo compilada
+          with
+          [
+              _Other1=double,
+              _Other2=double
+          ]
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\Parser.cpp(17,18): message : consulte a referência à instanciação 'std::pair<float,float>::pair<double,double,0>(_Other1 &&,_Other2 &&) noexcept' do modelo que está sendo compilada
+          with
+          [
+              _Other1=double,
+              _Other2=double
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\utility(172,54): warning C4244: 'inicializando': conversão de '_Ty' para '_Ty2', possível perda de dados
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty2=float
+          ]
+  engine.cpp
+C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\engine\engine.cpp(32,21): warning C4018: '<': incompatibilidade de signed/unsigned
+  Gerando Código...
+  engine.vcxproj -> C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG\Release\engine.exe

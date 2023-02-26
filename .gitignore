@@ -1,2 +1,12 @@
 *.vs
 *.vscode
+*.exe
+*/*.exe
+*/build
+*/*.sln
+*/*vcxproj
+*/*vcxproj.filters
+*/*.dll
+*/CMakeFiles
+*/*.3d
+*/*CMake*

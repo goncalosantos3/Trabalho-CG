@@ -29,3 +29,33 @@ float Camera::getFar()
 {
     return this->far;
 }
+
+void Camera::setPosition(Ponto* position)
+{
+    this->position = position;
+}
+
+void Camera::setLookAt(Ponto* lookAt)
+{
+    this->lookAt = lookAt;
+}
+
+void Camera::setUp(Ponto* up)
+{
+    this->up = up;
+}
+
+void Camera::setFov(float fov)
+{
+    this->fov = fov;
+}
+
+void Camera::setNear(float near)
+{
+    this->near = near;
+}
+
+void Camera::setFar(float far)
+{
+    this->far = far;
+}
