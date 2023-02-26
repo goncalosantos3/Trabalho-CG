@@ -1,7 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <iostream>
-#include <fstream> 
+#include <fstream>
+#include "Forma.h"
+#include "Ponto.h"
 using namespace std;
 
 // A coordenada y é sempre 0
@@ -9,10 +11,27 @@ using namespace std;
 void geraPlano(float len, float div, char *file){
     ofstream f(file);
 
-    float x, y = 0, z;
-    float ladoQua = len/div;
-    float ref = len / 2;
+    Forma forma = new Forma();
 
+    float ref = len / 2;
+    float x = -ref, y = 0, z = -ref;
+    float ladoQua = len/div;
+
+    for (; z < ref; z += ladoQua)
+    {
+        for (; x < ref; x += ladoQua)
+        {
+            forma->addPonto(new Ponto(x, y, z));
+            forma->addPonto(new Ponto(x, y, z+ladoQua));
+            forma->addPonto(new Ponto(x+ladoQua, y, z+ladoQua));
+
+            forma->addPonto(new Ponto(x, y, z));
+            forma->addPonto(new Ponto(x + ladoQua, y, z + ladoQua));
+            forma->addPonto(new Ponto(x+ladoQua, y, z));
+        }
+    }
+
+    /*
     for(float i = 0; i < div; i++){
         for(float j = 0; j < div; j++){
             for(float k = 0; k < 2; k ++){
@@ -29,7 +48,9 @@ void geraPlano(float len, float div, char *file){
             }
         }
     }
+    */
 
+    f << forma;
     f.close();
 }
 
