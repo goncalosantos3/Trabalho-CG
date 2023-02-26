@@ -9,7 +9,7 @@ using namespace std;
 // A coordenada y é sempre 0
 // O plano tem que estar centrado na origem
 void geraPlano(float len, float div, char *file){
-    ofstream f(file);
+    // ofstream f(file);
 
     Forma* forma = new Forma();
 
@@ -19,6 +19,7 @@ void geraPlano(float len, float div, char *file){
 
     for (; z < ref; z += ladoQua)
     {
+        x = -ref;
         for (; x < ref; x += ladoQua)
         {
             forma->adicionarPonto(Ponto(x, y, z));
@@ -31,27 +32,10 @@ void geraPlano(float len, float div, char *file){
         }
     }
 
-    /*
-    for(float i = 0; i < div; i++){
-        for(float j = 0; j < div; j++){
-            for(float k = 0; k < 2; k ++){
-                x = -ref + j * ladoQua;
-                z = -ref + j * ladoQua;
-                f << to_string(x) + ", " + to_string(y) + ", " + to_string(z) + "\n";
+    forma->escreveFicheiro(file);
 
-                x = -ref + j * ladoQua;
-                z = -ref + j * ladoQua;
-                f << to_string(x) + ", " + to_string(y) + ", " + to_string(z) + "\n";
-
-
-                f << to_string(x) + ", " + to_string(y) + ", " + to_string(z) + "\n";
-            }
-        }
-    }
-    */
-
-    f << forma;
-    f.close();
+    // f << forma;
+    // f.close();
 }
 
 int main(int argc, char *argv[]){

@@ -2,6 +2,7 @@
 
 #include<vector>
 #include<iostream>
+#include <fstream>
 #include "Ponto.h"
 
 class Forma
@@ -15,4 +16,5 @@ public:
 
 	void adicionarPonto(Ponto p);
 	friend std::ostream& operator<<(std::ostream& stream, const Forma& vec);
+	void escreveFicheiro(char *file);
 };
