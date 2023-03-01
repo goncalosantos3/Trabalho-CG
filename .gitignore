@@ -28,3 +28,4 @@ Release/*
 Debug/*
 Win32/*
 *vc
+*.vcxproj.user
