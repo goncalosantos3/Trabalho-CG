@@ -18,7 +18,7 @@ private:
     // static string filesDirectory;
 
 public:
-    Parser(){};
+    Parser():window(500,500), camera(new Camera()), models(){};
     ~Parser(){};
 
     int parseWindow(rapidxml::xml_node<>* windowNode);

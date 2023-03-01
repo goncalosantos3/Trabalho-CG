@@ -8,8 +8,8 @@
     </camera>
     <group>
         <models>
-            <model file="gerador/plane.3d" />
-            <model file="gerador/box.3d" />
+            <model file="C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG/gerador/plane.3d" />
+            <model file="C:\Users\Joao Novais\OneDrive - Universidade do Minho\Ambiente de Trabalho\Universidade\Trabalho-CG/gerador/box.3d" />
         </models>
     </group>
 </world>

@@ -33,7 +33,10 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
         z = node->first_attribute("z");
 
         if (!x || !y || !z)
+        {
+            cout << "Invalid Camera Position" << endl;
             return 2;
+        }
 
         this->camera->setPosition(new Ponto(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
     }
@@ -47,7 +50,10 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
         z = node->first_attribute("z");
 
         if (!x || !y || !z)
+        {
+            cout << "Invalid Camera LookAt" << endl;
             return 2;
+        }
             
         this->camera->setLookAt(new Ponto(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
     }
@@ -61,7 +67,10 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
         z = node->first_attribute("z");
 
         if (!x || !y || !z)
+        {
+            cout << "Invalid Camera Up" << endl;
             return 2;
+        }
             
         this->camera->setUp(new Ponto(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
     }
@@ -70,12 +79,15 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
 
     if (node)
     {
-        x = node->first_attribute("x");
-        y = node->first_attribute("y");
-        z = node->first_attribute("z");
+        x = node->first_attribute("fov");
+        y = node->first_attribute("near");
+        z = node->first_attribute("far");
 
         if (!x || !y || !z)
+        {
+            cout << "Invalid Camera Projection" << endl;
             return 2;
+        }
 
         this->camera->setFov(strtod(x->value(), NULL));
         this->camera->setNear(strtod(y->value(), NULL));
@@ -123,6 +135,12 @@ int Parser::parseXML(char *filePath)
 
     root_node = document.first_node("world");
 
+    if (!root_node)
+    {
+        std::cout << "Erro ao ler ficheiro" << std::endl;
+        return 1;
+    }
+
     int rv = this->parseWindow(root_node->first_node("window"));
     rv = rv | this->parseCamera(root_node->first_node("camera"));
     rv = rv | this->parseGroup(root_node->first_node("group"));
@@ -146,7 +164,8 @@ int Parser::parseModel(char* filename)
     while(getline(modelFile, line))
     {
         float x,y,z;
-        if (sscanf(line.c_str(), "%f, %f, %f\n", &x, &y, &z) != 3)
+        cout << line << endl;
+        if (sscanf_s(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
             return 1;
 
         forma->adicionarPonto(Ponto(x,y,z));

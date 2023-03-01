@@ -6,6 +6,7 @@
 #include <GL/glut.h>
 #endif
 
+#include <filesystem>
 #include <math.h>
 
 std::pair<float, float> window;
@@ -25,6 +26,22 @@ void renderScene(void)
 			  lookAt->getX(), lookAt->getY(), lookAt->getZ(),
 			  up->getX(), up->getY(), up->getZ());
 
+	glBegin(GL_LINES);
+		// X axis in red
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(-100.0f, 0.0f, 0.0f);
+		glVertex3f(100.0f, 0.0f, 0.0f);
+		// Y Axis in Green
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(0.0f, -100.0f, 0.0f);
+		glVertex3f(0.0f, 100.0f, 0.0f);
+		// Z Axis in Blue
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f, -100.0f);
+		glVertex3f(0.0f, 0.0f, 100.0f);
+	glEnd();
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
 	for (Forma* forma : models)
 	{
@@ -41,6 +58,8 @@ void renderScene(void)
 		}
 	}
 	glEnd();
+
+	glutSwapBuffers();
 }
 
 void changeSize(int w, int h)
@@ -75,8 +94,12 @@ int main(int argc, char **argv)
 
     Parser parser;
 
-    parser.parseXML("../files/exemplo.xml");
+	std::cout << argv[0] << std::endl;
+
+    if (parser.parseXML("C:\\Users\\Joao Novais\\OneDrive - Universidade do Minho\\Ambiente de Trabalho\\Universidade\\Trabalho-CG\\files\\exemplo.xml"))
+		return 1;
 	
+	std::cout << "Passei aqui" << std::endl;
 
 	window = parser.getWindow();
 	camera = parser.getCamera();
@@ -88,11 +111,11 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(window.first, window.second);
 	glutCreateWindow("CG@DI-UM");
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
-
 
 	// put here the registration of the keyboard callbacks
 	//glutKeyboardFunc(mover);
