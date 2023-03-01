@@ -29,3 +29,4 @@ Debug/*
 Win32/*
 *vc
 *.vcxproj.user
+toolkits
