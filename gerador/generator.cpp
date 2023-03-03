@@ -170,18 +170,18 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
     for(int i = 0; i < slices; i++){
         // Base
         forma->addPoint(Point(0,0,0));
-        forma->addPoint(Point(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
         forma->addPoint(Point(radius * sin(alfainc),0, radius * cos(alfainc)));
+        forma->addPoint(Point(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
 
         // Lados
         for(int j = 0; j < stacks; j++){
-            forma->addPoint(Point((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
+            forma->addPoint(Point((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
             forma->addPoint(Point(r * sin(alfainc),altinc,r * cos(alfainc)));
             forma->addPoint(Point(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
             
             forma->addPoint(Point((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
             forma->addPoint(Point((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
-            forma->addPoint(Point(r * sin(alfainc),altinc,r * cos(alfainc)));
+            forma->addPoint(Point(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
 
             altinc += alt;
             r -= raio;
@@ -206,5 +206,5 @@ int main(int argc, char *argv[]){
         geraCone(stof(argv[2]),stof(argv[3]),stoi(argv[4]),stoi(argv[5]),argv[6]);
     }
 
-    return 1;
+    return 0;
 }
