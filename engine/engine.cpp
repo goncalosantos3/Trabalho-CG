@@ -94,13 +94,9 @@ int main(int argc, char **argv)
 
     Parser parser;
 
-	std::cout << argv[0] << std::endl;
-
     if (parser.parseXML(argv[1]))
 		return 1;
 	
-	std::cout << "Passei aqui" << std::endl;
-
 	window = parser.getWindow();
 	camera = parser.getCamera();
 	models = parser.getModels();
@@ -110,17 +106,11 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(window.first, window.second);
-	glutCreateWindow("CG@DI-UM");
+	glutCreateWindow(argv[1]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
-
-	// put here the registration of the keyboard callbacks
-	//glutKeyboardFunc(mover);
-	//glutSpecialFunc(transformar);
-
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);

@@ -34,7 +34,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
 
         if (!x || !y || !z)
         {
-            cout << "Invalid Camera Position" << endl;
+            cerr << "Invalid Camera Position" << endl;
             return 2;
         }
 
@@ -51,7 +51,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
 
         if (!x || !y || !z)
         {
-            cout << "Invalid Camera LookAt" << endl;
+            cerr << "Invalid Camera LookAt" << endl;
             return 2;
         }
             
@@ -68,7 +68,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
 
         if (!x || !y || !z)
         {
-            cout << "Invalid Camera Up" << endl;
+            cerr << "Invalid Camera Up" << endl;
             return 2;
         }
             
@@ -85,7 +85,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
 
         if (!x || !y || !z)
         {
-            cout << "Invalid Camera Projection" << endl;
+            cerr << "Invalid Camera Projection" << endl;
             return 2;
         }
 
@@ -131,13 +131,11 @@ int Parser::parseXML(char *filePath)
 
     document.parse<0>(&buffer[0]);
 
-    cout << "Hello" <<  document.value() << endl;
-
     root_node = document.first_node("world");
 
     if (!root_node)
     {
-        std::cout << "Erro ao ler ficheiro" << std::endl;
+        cerr << "Erro ao ler ficheiro" << std::endl;
         return 1;
     }
 
@@ -157,16 +155,24 @@ int Parser::parseModel(char* filename)
 {
     ifstream modelFile(filename);
 
+	if (modelFile.bad())
+	{
+		cerr << "Error opening file \"" << filename << "\".\nMake sure the file exists...";
+		return 1;
+	}
+
     string line;
 
     Shape *forma = new Shape();
 
     while(getline(modelFile, line))
     {
-        cout << line << endl;
         float x,y,z;
         if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
+		{
+			cerr << "Error: model line has wrong syntax...\n Make sure the file was generated correctly..";
             return 1;
+		}
 
         forma->addPoint(Point(x,y,z));
     }
