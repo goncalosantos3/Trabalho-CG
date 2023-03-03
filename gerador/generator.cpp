@@ -162,33 +162,35 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
 
     float alfa = 2 * M_PI/slices;
 	float alfainc = alfa;
+    float alt = height / stacks;
+    float altinc = alt;
+    float raio = radius / stacks;
+    float r = radius - raio;
 
-    // Base
     for(int i = 0; i < slices; i++){
+        // Base
         forma->adicionarPonto(Ponto(0,0,0));
         forma->adicionarPonto(Ponto(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
         forma->adicionarPonto(Ponto(radius * sin(alfainc),0, radius * cos(alfainc)));
 
+        // Lados
+        for(int j = 0; j < stacks; j++){
+            forma->adicionarPonto(Ponto((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
+            forma->adicionarPonto(Ponto(r * sin(alfainc),altinc,r * cos(alfainc)));
+            forma->adicionarPonto(Ponto(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
+            
+            forma->adicionarPonto(Ponto((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
+            forma->adicionarPonto(Ponto((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
+            forma->adicionarPonto(Ponto(r * sin(alfainc),altinc,r * cos(alfainc)));
+
+            altinc += alt;
+            r -= raio;
+        }
+
         alfainc += alfa;
+        altinc = alt;
+        r = radius - raio;
     }
-
-    float alt = height / stacks;
-    float altinc = alt;
-
-    // Lados
-    // for(int i = 0; i < stacks; i++){
-    //     for(int j = 0; j < slices; j++){
-    //         forma->adicionarPonto(Ponto());
-    //         forma->adicionarPonto(Ponto());
-    //         forma->adicionarPonto(Ponto());
-// 
-    //         forma->adicionarPonto(Ponto());
-    //         forma->adicionarPonto(Ponto());
-    //         forma->adicionarPonto(Ponto());
-// 
-    //         altinc += alt;
-    //     }
-    // }
 
     forma->escreveFicheiro(file);
 }
