@@ -17,7 +17,7 @@
 *.dll
 *CMakeFiles
 *.3d
-*CMake*
+# *CMake*
 */Release
 */Debug
 *Release
