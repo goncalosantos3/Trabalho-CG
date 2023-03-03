@@ -1,16 +1,16 @@
 #include "headers/Camera.h"
 
-Ponto* Camera::getPosition()
+Point* Camera::getPosition()
 {
     return this->position;
 }
 
-Ponto* Camera::getLookAt()
+Point* Camera::getLookAt()
 {
     return this->lookAt;
 }
 
-Ponto* Camera::getUp()
+Point* Camera::getUp()
 {
     return this->up;
 }
@@ -30,17 +30,17 @@ float Camera::getFar()
     return this->far;
 }
 
-void Camera::setPosition(Ponto* position)
+void Camera::setPosition(Point* position)
 {
     this->position = position;
 }
 
-void Camera::setLookAt(Ponto* lookAt)
+void Camera::setLookAt(Point* lookAt)
 {
     this->lookAt = lookAt;
 }
 
-void Camera::setUp(Ponto* up)
+void Camera::setUp(Point* up)
 {
     this->up = up;
 }

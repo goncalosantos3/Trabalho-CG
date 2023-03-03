@@ -38,7 +38,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
             return 2;
         }
 
-        this->camera->setPosition(new Ponto(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
+        this->camera->setPosition(new Point(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
     }
 
     node = cameraNode->first_node("lookAt");
@@ -55,7 +55,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
             return 2;
         }
             
-        this->camera->setLookAt(new Ponto(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
+        this->camera->setLookAt(new Point(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
     }
     
     node = cameraNode->first_node("up");
@@ -72,7 +72,7 @@ int Parser::parseCamera (rapidxml::xml_node<>* cameraNode)
             return 2;
         }
             
-        this->camera->setUp(new Ponto(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
+        this->camera->setUp(new Point(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
     }
 
     node = cameraNode->first_node("projection");
@@ -159,15 +159,16 @@ int Parser::parseModel(char* filename)
 
     string line;
 
-    Forma *forma = new Forma();
+    Shape *forma = new Shape();
 
     while(getline(modelFile, line))
     {
+        cout << line << endl;
         float x,y,z;
         if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
             return 1;
 
-        forma->adicionarPonto(Ponto(x,y,z));
+        forma->addPoint(Point(x,y,z));
     }
 
     this->models.push_back(forma);
@@ -185,8 +186,8 @@ Camera* Parser::getCamera()
     return this->camera;
 }
 
-std::vector<Forma*> Parser::getModels()
+std::vector<Shape*> Parser::getModels()
 {
-    std::vector<Forma*> dup(this->models);
+    std::vector<Shape*> dup(this->models);
     return dup;
 }

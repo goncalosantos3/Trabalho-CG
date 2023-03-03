@@ -3,14 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#include "Forma.h"
-#include "Ponto.h"
+#include "Shape.h"
+#include "Point.h"
 using namespace std;
 
 // A coordenada y é sempre 0
 // O plano tem que estar centrado na origem
 void geraPlano(float len, float div, char *file){
-    Forma* forma = new Forma();
+    Shape* forma = new Shape();
 
     float ref = len / 2;
     float x = -ref, y = 0, z = -ref;
@@ -21,22 +21,22 @@ void geraPlano(float len, float div, char *file){
         x = -ref;
         for (; x < ref; x += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y, z+ladoQua));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z+ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y, z+ladoQua));
+            forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x + ladoQua, y, z + ladoQua));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
+            forma->addPoint(Point(x+ladoQua, y, z));
         }
     }
 
-    forma->escreveFicheiro(file);
+    forma->writeToFile(file);
 }
 
 // Um cubo é composto por 6 faces
 void geraCubo(float len, float div, char *file){
-    Forma* forma = new Forma();
+    Shape* forma = new Shape();
 
     float ref = len / 2;
     float x = -ref, y = -ref, z = -ref;
@@ -47,13 +47,13 @@ void geraCubo(float len, float div, char *file){
         x = -ref;
         for (; x < ref; x += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z+ladoQua));
-            forma->adicionarPonto(Ponto(x, y, z+ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
+            forma->addPoint(Point(x, y, z+ladoQua));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z));
-            forma->adicionarPonto(Ponto(x + ladoQua, y, z + ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x+ladoQua, y, z));
+            forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
         }
     }
 
@@ -66,13 +66,13 @@ void geraCubo(float len, float div, char *file){
         x = -ref;
         for (; x < ref; x += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y, z+ladoQua));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z+ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y, z+ladoQua));
+            forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x + ladoQua, y, z + ladoQua));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
+            forma->addPoint(Point(x+ladoQua, y, z));
         }
     }
 
@@ -85,13 +85,13 @@ void geraCubo(float len, float div, char *file){
         y = -ref;
         for (; y < ref; y += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y, z+ladoQua));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z+ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y, z+ladoQua));
+            forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z + ladoQua));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
+            forma->addPoint(Point(x, y+ladoQua, z));
         }
     }
 
@@ -104,13 +104,13 @@ void geraCubo(float len, float div, char *file){
         y = -ref;
         for (; y < ref; y += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z+ladoQua));
-            forma->adicionarPonto(Ponto(x, y, z+ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
+            forma->addPoint(Point(x, y, z+ladoQua));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z + ladoQua));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y+ladoQua, z));
+            forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
         }
     }
 
@@ -123,13 +123,13 @@ void geraCubo(float len, float div, char *file){
         y = -ref;
         for (; y < ref; y += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y+ladoQua, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x, y+ladoQua, z));
+            forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y+ladoQua, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+            forma->addPoint(Point(x+ladoQua, y, z));
         }
     }
 
@@ -142,23 +142,23 @@ void geraCubo(float len, float div, char *file){
         y = -ref;
         for (; y < ref; y += ladoQua)
         {
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y+ladoQua, z));
-            forma->adicionarPonto(Ponto(x, y+ladoQua, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+            forma->addPoint(Point(x, y+ladoQua, z));
 
-            forma->adicionarPonto(Ponto(x, y, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y, z));
-            forma->adicionarPonto(Ponto(x+ladoQua, y+ladoQua, z));
+            forma->addPoint(Point(x, y, z));
+            forma->addPoint(Point(x+ladoQua, y, z));
+            forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
         }
     }
 
 
-    forma->escreveFicheiro(file);
+    forma->writeToFile(file);
 }
 
 // A base do cone tem que estar contida no plano XZ
 void geraCone(float radius, float height, int slices, int stacks, char * file){
-    Forma* forma = new Forma();
+    Shape* forma = new Shape();
 
     float alfa = 2 * M_PI/slices;
 	float alfainc = alfa;
@@ -169,19 +169,19 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
 
     for(int i = 0; i < slices; i++){
         // Base
-        forma->adicionarPonto(Ponto(0,0,0));
-        forma->adicionarPonto(Ponto(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
-        forma->adicionarPonto(Ponto(radius * sin(alfainc),0, radius * cos(alfainc)));
+        forma->addPoint(Point(0,0,0));
+        forma->addPoint(Point(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
+        forma->addPoint(Point(radius * sin(alfainc),0, radius * cos(alfainc)));
 
         // Lados
         for(int j = 0; j < stacks; j++){
-            forma->adicionarPonto(Ponto((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
-            forma->adicionarPonto(Ponto(r * sin(alfainc),altinc,r * cos(alfainc)));
-            forma->adicionarPonto(Ponto(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
+            forma->addPoint(Point((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
+            forma->addPoint(Point(r * sin(alfainc),altinc,r * cos(alfainc)));
+            forma->addPoint(Point(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
             
-            forma->adicionarPonto(Ponto((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
-            forma->adicionarPonto(Ponto((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
-            forma->adicionarPonto(Ponto(r * sin(alfainc),altinc,r * cos(alfainc)));
+            forma->addPoint(Point((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
+            forma->addPoint(Point((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
+            forma->addPoint(Point(r * sin(alfainc),altinc,r * cos(alfainc)));
 
             altinc += alt;
             r -= raio;
@@ -192,7 +192,7 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
         r = radius - raio;
     }
 
-    forma->escreveFicheiro(file);
+    forma->writeToFile(file);
 }
 
 

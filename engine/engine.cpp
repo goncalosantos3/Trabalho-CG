@@ -11,7 +11,7 @@
 
 std::pair<float, float> window;
 Camera* camera;
-std::vector<Forma*> models;
+std::vector<Shape*> models;
 
 void renderScene(void)
 {
@@ -19,7 +19,7 @@ void renderScene(void)
 
 	// set the camera
 	glLoadIdentity();
-	Ponto* position = camera->getPosition(),
+	Point* position = camera->getPosition(),
 		* lookAt = camera->getLookAt(),
 		* up = camera->getUp();
 	gluLookAt(position->getX(), position->getY(), position->getZ(),
@@ -43,14 +43,14 @@ void renderScene(void)
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_TRIANGLES);
-	for (Forma* forma : models)
+	for (Shape* forma : models)
 	{
-		std::vector<Ponto> pontos = forma->getPontos();
+		std::vector<Point> pontos = forma->getPoints();
 		for (int i = 0; i < pontos.size(); i += 3)
 		{
-			Ponto p1 = pontos.at(i);
-			Ponto p2 = pontos.at(i+1);
-			Ponto p3 = pontos.at(i+2);
+			Point p1 = pontos.at(i);
+			Point p2 = pontos.at(i+1);
+			Point p3 = pontos.at(i+2);
 
 			glVertex3f(p1.getX(), p1.getY(), p1.getZ());
 			glVertex3f(p2.getX(), p2.getY(), p2.getZ());

@@ -5,8 +5,8 @@
 #include <utility>
 
 #include "Camera.h"
-#include "Forma.h"
-#include "Ponto.h"
+#include "Shape.h"
+#include "Point.h"
 #include "rapidxml.hpp"
 
 class Parser
@@ -14,7 +14,7 @@ class Parser
 private:
     std::pair<float, float> window;
     Camera* camera;
-    std::vector<Forma*> models;
+    std::vector<Shape*> models;
     // static string filesDirectory;
 
 public:
@@ -30,5 +30,5 @@ public:
 
     std::pair<float, float> getWindow();
     Camera* getCamera();
-    std::vector<Forma*> getModels();
+    std::vector<Shape*> getModels();
 };

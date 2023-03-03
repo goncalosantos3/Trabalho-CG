@@ -6,7 +6,7 @@ PROJECT(engine)
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Forma.cpp engine/Parser.cpp engine/Ponto.cpp)
+add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Shape.cpp engine/Parser.cpp engine/Point.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
@@ -56,7 +56,7 @@ endif(WIN32)
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(generator gerador/Forma.cpp gerador/generator.cpp gerador/Ponto.cpp )
+add_executable(generator gerador/Shape.cpp gerador/generator.cpp gerador/Point.cpp )
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
