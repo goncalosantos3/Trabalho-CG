@@ -89,14 +89,14 @@ void changeSize(int w, int h)
 
 int main(int argc, char **argv)
 {
-    //if (argc < 2)
-      //  return 1;
+	if (argc < 2)
+	   return 1;
 
     Parser parser;
 
 	std::cout << argv[0] << std::endl;
 
-    if (parser.parseXML("C:\\Users\\Joao Novais\\OneDrive - Universidade do Minho\\Ambiente de Trabalho\\Universidade\\Trabalho-CG\\files\\exemplo.xml"))
+    if (parser.parseXML(argv[1]))
 		return 1;
 	
 	std::cout << "Passei aqui" << std::endl;

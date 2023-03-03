@@ -164,8 +164,7 @@ int Parser::parseModel(char* filename)
     while(getline(modelFile, line))
     {
         float x,y,z;
-        cout << line << endl;
-        if (sscanf_s(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
+        if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
             return 1;
 
         forma->adicionarPonto(Ponto(x,y,z));
