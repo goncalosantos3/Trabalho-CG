@@ -17,7 +17,7 @@ void Forma::escreveFicheiro (char *file)
 	std::ofstream f(file);
 
 	for (Ponto ponto : this->pontos)
-		f << ponto.getX() << ", " << ponto.getY() << ", " << ponto.getZ() << "\n";
+		f << "glVertex3f(" << ponto.getX() << ", " << ponto.getY() << ", " << ponto.getZ() << ");\n";
 
 	f.close();
 }
