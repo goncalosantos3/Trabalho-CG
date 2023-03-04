@@ -195,6 +195,25 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
     forma->writeToFile(file);
 }
 
+void geraEsfera(float radius, int slices, int stacks, char *file) {
+    Shape* forma = new Shape();
+
+
+    float alphainc = 2 * M_PI / slices;
+    float alpha;
+    float betainc = M_PI / stacks;
+    float beta;
+
+    for (int i = 0; i < stacks; i++) {
+        beta = i * betainc - (M_PI / 2);
+        for (int j = 0; j < slices; j++) {
+            alpha = j * alphainc;
+            // Adicionar pontos
+            // Não sei centrar em (0,0)
+        }
+    }
+}
+
 
 int main(int argc, char *argv[]){
 
