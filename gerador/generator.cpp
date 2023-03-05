@@ -15,11 +15,11 @@ void geraPlano(float len, float div, char *file){
     float ref = len / 2;
     float x = -ref, y = 0, z = -ref;
     float ladoQua = len/div;
+	int i,j;
 
-    for (; z < ref; z += ladoQua)
+    for (i=0, z=-ref ; i < div; i++, z+=ladoQua)
     {
-        x = -ref;
-        for (; x < ref; x += ladoQua)
+		for (j=0, x=-ref ; j<div ; j++, x+=ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x, y, z+ladoQua));
