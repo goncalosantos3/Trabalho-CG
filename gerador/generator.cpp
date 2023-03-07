@@ -206,16 +206,17 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
 
     for (int i = 0; i < stacks; i++, beta+=betainc) {
         alpha = 0;
-        for (int j = 0; j < slices; j++, alfa+=alphainc) {
+        for (int j = 0; j < slices; j++, alpha+=alphainc) {
            // alpha = j * alphainc;
             // Adicionar pontos
             // Não sei centrar em (0,0)
-            forma->addPoint(Point(radius * cos(beta) * sin(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
-            forma->addPoint(Point(radius * cos(beta+betainc) * sin(alpha), radius * sin(beta+betainc), radius * cos(beta+betainc) * sin(alpha)));
-            forma->addPoint(Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
-            forma->addPoint(Point(radius * cos(beta) * sin(alpha+alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
-            forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha)));
-            forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
+            forma->addPoint(Point(radius * cos(beta) * cos(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
+            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha), radius * sin(beta+betainc), radius * cos(beta+betainc) * sin(alpha)));
+            forma->addPoint(Point(radius * cos(beta) * cos(alpha + alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
+
+            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha)));
+            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
+            forma->addPoint(Point(radius * cos(beta) * cos(alpha+alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
         }
     }
 
@@ -232,6 +233,9 @@ int main(int argc, char *argv[]){
     }else if(strcmp(argv[1],"cone") == 0){
         geraCone(stof(argv[2]),stof(argv[3]),stoi(argv[4]),stoi(argv[5]),argv[6]);
     }
+	else if(strcmp(argv[1],"sphere") == 0){
+		geraEsfera(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
+	}
 
     return 0;
 }
