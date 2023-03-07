@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(window.first, window.second);
 	glutCreateWindow(argv[1]);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT, GL_LINE);
 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);

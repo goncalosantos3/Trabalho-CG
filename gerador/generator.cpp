@@ -205,18 +205,18 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
     float beta=-M_PI_2;
 
     for (int i = 0; i < stacks; i++, beta+=betainc) {
-        alpha = 0;
+        alpha = alphainc/2;
         for (int j = 0; j < slices; j++, alpha+=alphainc) {
            // alpha = j * alphainc;
             // Adicionar pontos
             // Não sei centrar em (0,0)
             forma->addPoint(Point(radius * cos(beta) * cos(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
-            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha), radius * sin(beta+betainc), radius * cos(beta+betainc) * sin(alpha)));
+            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
             forma->addPoint(Point(radius * cos(beta) * cos(alpha + alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
 
             forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha)));
             forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
-            forma->addPoint(Point(radius * cos(beta) * cos(alpha+alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
+            forma->addPoint(Point(radius * cos(beta) * cos(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
         }
     }
 
