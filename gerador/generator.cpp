@@ -232,7 +232,9 @@ int main(int argc, char *argv[]){
     }
 	else if(strcmp(argv[1],"sphere") == 0){
 		geraEsfera(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
-	}
+	}else{
+        printf("Primitiva: %s, não suportada!\n", argv[1]);
+    }
 
     return 0;
 }
