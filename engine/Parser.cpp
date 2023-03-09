@@ -125,7 +125,9 @@ int Parser::parseXML(char *filePath)
     xml_document<> document;
     xml_node<> * root_node = NULL;
 
-    ifstream file(filePath);
+	string path = "../files/";
+	path.append(filePath);
+    ifstream file(path);
     vector<char> buffer((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
     buffer.push_back('\0');
 
@@ -153,7 +155,9 @@ int Parser::parseXML(char *filePath)
 
 int Parser::parseModel(char* filename)
 {
-    ifstream modelFile(filename);
+	string path = "../files/";
+	path.append(filename);
+    ifstream modelFile(path);
 
 	if (modelFile.bad())
 	{

@@ -42,10 +42,10 @@ void geraCubo(float len, float div, char *file){
     float x = -ref, y = -ref, z = -ref;
     float ladoQua = len/div;
 
-    for (; z < ref; z += ladoQua)
+    for (int i=0; i < div; i++,z += ladoQua)
     {
         x = -ref;
-        for (; x < ref; x += ladoQua)
+        for (int j=0; j<div ; j++,x += ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
@@ -61,10 +61,10 @@ void geraCubo(float len, float div, char *file){
     y = ref;
     z = -ref;
 
-    for (; z < ref; z += ladoQua)
+    for (int i=0; i<div ; i++,z += ladoQua)
     {
         x = -ref;
-        for (; x < ref; x += ladoQua)
+        for (int j=0; j<div ; j++, x += ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x, y, z+ladoQua));
@@ -80,10 +80,10 @@ void geraCubo(float len, float div, char *file){
     y = -ref;
     z = -ref;
 
-    for (; z < ref; z += ladoQua)
+    for (int i=0; i<div ; i++,z += ladoQua)
     {
         y = -ref;
-        for (; y < ref; y += ladoQua)
+        for (int j=0; j<div ; j++, y += ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x, y, z+ladoQua));
@@ -99,10 +99,10 @@ void geraCubo(float len, float div, char *file){
     y = -ref;
     z = -ref;
 
-    for (; z < ref; z += ladoQua)
+    for (int i=0; i<div ; i++,z += ladoQua)
     {
         y = -ref;
-        for (; y < ref; y += ladoQua)
+        for (int j=0; j<div ; j++,y += ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
@@ -118,10 +118,10 @@ void geraCubo(float len, float div, char *file){
     y = -ref;
     z = -ref;
 
-    for (; x < ref; x += ladoQua)
+    for (int i=0; i<div ; i++,x += ladoQua)
     {
         y = -ref;
-        for (; y < ref; y += ladoQua)
+        for (int j=0; j<div ; j++,y += ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x, y+ladoQua, z));
@@ -137,10 +137,10 @@ void geraCubo(float len, float div, char *file){
     y = -ref;
     z = ref;
 
-    for (; x < ref; x += ladoQua)
+    for (int i=0; i<div ; i++,x += ladoQua)
     {
         y = -ref;
-        for (; y < ref; y += ladoQua)
+        for (int j=0; j<div ; j++,y += ladoQua)
         {
             forma->addPoint(Point(x, y, z));
             forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
@@ -207,9 +207,6 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
     for (int i = 0; i < stacks; i++, beta+=betainc) {
         alpha = alphainc/2;
         for (int j = 0; j < slices; j++, alpha+=alphainc) {
-           // alpha = j * alphainc;
-            // Adicionar pontos
-            // Não sei centrar em (0,0)
             forma->addPoint(Point(radius * cos(beta) * cos(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
             forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
             forma->addPoint(Point(radius * cos(beta) * cos(alpha + alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));

@@ -14,7 +14,12 @@ std::ostream& operator<<(std::ostream& stream, const Shape& forma)
 
 void Shape::writeToFile (char *file)
 {
-	std::ofstream f(file);
+	std::string path = "", fileStr = std::string(file);
+	if (!fileStr.find("../files/"))
+		path.append("../files/");
+	path.append(fileStr);
+
+	std::ofstream f(path);
 
 	for (Point ponto : this->pontos)
 		f << ponto.getX() << "," << ponto.getY() << ", " << ponto.getZ() << "\n";
