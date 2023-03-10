@@ -8,10 +8,7 @@
     </camera>
     <group>
         <models>
-			<!--<model file="../files/plane.3d" />
-			//<model file="../files/cube.3d" />-->
-            <!-- <model file="../files/cone2.3d" /> -->
-			<model file="../files/sphere.3d" />
+			<model file="cylinder.3d"/>
         </models>
     </group>
 </world>

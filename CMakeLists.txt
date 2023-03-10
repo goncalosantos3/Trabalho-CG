@@ -52,11 +52,12 @@ else (WIN32) #Linux and Mac
 	
 endif(WIN32)
 
+PROJECT(generator)
 
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(generator gerador/Shape.cpp gerador/generator.cpp gerador/Point.cpp )
+add_executable(${PROJECT_NAME} gerador/Shape.cpp gerador/generator.cpp gerador/Point.cpp )
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})

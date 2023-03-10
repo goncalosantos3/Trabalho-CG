@@ -15,7 +15,7 @@ std::ostream& operator<<(std::ostream& stream, const Shape& forma)
 void Shape::writeToFile (char *file)
 {
 	std::string path = "", fileStr = std::string(file);
-	if (!fileStr.find("../files/"))
+	if (fileStr.find("../files/") == -1)
 		path.append("../files/");
 	path.append(fileStr);
 

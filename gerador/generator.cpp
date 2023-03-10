@@ -154,6 +154,7 @@ void geraCubo(float len, float div, char *file){
 
 
     forma->writeToFile(file);
+
 }
 
 // A base do cone tem que estar contida no plano XZ
@@ -220,6 +221,45 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
     forma->writeToFile(file);
 }
 
+void geraCilindro(float radius, float height, int sides, char* file) 
+{
+	int i;
+	float step;
+
+	step = 360.0 / sides;
+
+	Shape *forma = new Shape();
+
+	// top
+	for (i = 0; i < sides; i++) {
+		forma->addPoint(Point(0, height*0.5, 0));
+		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+	}
+
+	// bottom
+	for (i = 0; i < sides; i++) {
+		forma->addPoint(Point(0, -height*0.5, 0));
+		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+	}
+
+	// body
+	for (i = 0; i <= sides; i++) {
+
+		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+
+		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+	}
+
+
+	forma->writeToFile(file);
+}
+
 
 int main(int argc, char *argv[]){
 
@@ -229,9 +269,10 @@ int main(int argc, char *argv[]){
         geraCubo(stof(argv[2]),stof(argv[3]),argv[4]);
     }else if(strcmp(argv[1],"cone") == 0){
         geraCone(stof(argv[2]),stof(argv[3]),stoi(argv[4]),stoi(argv[5]),argv[6]);
-    }
-	else if(strcmp(argv[1],"sphere") == 0){
+    }else if(strcmp(argv[1],"sphere") == 0){
 		geraEsfera(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
+	}else if(strcmp(argv[1], "cylinder")==0){
+		geraCilindro(stof(argv[2]), stof(argv[3]), stoi(argv[4]), argv[5]);
 	}else{
         printf("Primitiva: %s, não suportada!\n", argv[1]);
     }

@@ -11,6 +11,7 @@
 
 std::pair<float, float> window;
 Camera* camera;
+float alpha, beta, radius;
 std::vector<Shape*> models;
 
 void renderScene(void)
@@ -87,6 +88,42 @@ void changeSize(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+
+void processSpecialKeys(int key, int xx, int yy) {
+
+	switch (key) {
+
+	case GLUT_KEY_RIGHT:
+		alpha -= 0.1; break;
+
+	case GLUT_KEY_LEFT:
+		alpha += 0.1; break;
+
+	case GLUT_KEY_UP:
+		beta += 0.1f;
+		if (beta > 1.5f)
+			beta = 1.5f;
+		break;
+
+	case GLUT_KEY_DOWN:
+		beta -= 0.1f;
+		if (beta < -1.5f)
+			beta = -1.5f;
+		break;
+
+	case GLUT_KEY_PAGE_DOWN: radius -= 0.1f;
+		if (radius < 0.1f)
+			radius = 0.1f;
+		break;
+
+	case GLUT_KEY_PAGE_UP: radius += 0.1f; break;
+
+	}
+	camera->setPosition(new Point(radius*cos(beta)*sin(alpha), radius*sin(beta), radius*cos(beta)*cos(alpha)));
+	glutPostRedisplay();
+
+}
+
 int main(int argc, char **argv)
 {
 	if (argc < 2)
@@ -101,7 +138,13 @@ int main(int argc, char **argv)
 	camera = parser.getCamera();
 	models = parser.getModels();
 
-		
+	Point *cameraPosition = camera->getPosition();
+
+	radius = sqrt(cameraPosition->getX()*cameraPosition->getX() + cameraPosition->getY()*cameraPosition->getY() + cameraPosition->getZ()*cameraPosition->getZ());
+	beta = asin(cameraPosition->getY()/radius);
+	alpha = asin(cameraPosition->getX()/(radius*cos(beta)));
+	
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
@@ -111,6 +154,10 @@ int main(int argc, char **argv)
 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
+	glutIdleFunc(renderScene);
+
+
+	glutSpecialFunc(processSpecialKeys);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
