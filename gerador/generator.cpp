@@ -206,15 +206,15 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
     float beta=-M_PI_2;
 
     for (int i = 0; i < stacks; i++, beta+=betainc) {
-        alpha = alphainc/2;
+        alpha = 0;
         for (int j = 0; j < slices; j++, alpha+=alphainc) {
-            forma->addPoint(Point(radius * cos(beta) * cos(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
-            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
-            forma->addPoint(Point(radius * cos(beta) * cos(alpha + alphainc), radius * sin(beta), radius * cos(beta) * sin(alpha + alphainc)));
+            forma->addPoint(Point(radius * cos(beta) * sin(alpha), radius * sin(beta), radius * cos(beta) * cos(alpha)));
+            forma->addPoint(Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)));
+            forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)));
 
-            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha)));
-            forma->addPoint(Point(radius * cos(beta + betainc) * cos(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * sin(alpha + alphainc)));
-            forma->addPoint(Point(radius * cos(beta) * cos(alpha), radius * sin(beta), radius * cos(beta) * sin(alpha)));
+            forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc)));
+            forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)));
+            forma->addPoint(Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)));
         }
     }
 
