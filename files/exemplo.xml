@@ -1,18 +1,51 @@
 <world>
-    <window width="512" height="512" />
-    <camera> 
-		<position x="3.5" y="2.5" z="4.5" />
+	<window width="512" height="512" />
+	<camera> 
+		<position x="10" y="10" z="10" />
 		<lookAt x="0" y="0" z="0" />
 		<up x="0" y="1" z="0" />
-        <projection fov="60" near="1" far="1000" /> 
-    </camera>
-    <group>
-        <models>
-			<!-- <model file="box.3d"/> -->
-			<!-- <model file="plane.3d"/> -->
-			<!-- <model file="sphere.3d"/> -->
-			<!-- <model file="cylinder.3d"/> -->
+		<projection fov="60" near="1" far="1000" /> 
+	</camera>
+	<group>
+		<models>
 			<model file="cone.3d"/>
-        </models>
-    </group>
+		</models>
+		<group>
+			<transform>
+				<translate x="2" y="2" z="2"/>
+			</transform>
+			<models>
+				<model file="cone.3d"/>
+			</models>
+			<group>
+				<transform>
+					<translate x="2" y="2" z="2"/>
+				</transform>
+				<models>
+					<model file="cone.3d"/>
+				</models>
+			</group>
+		</group>
+		<group>
+			<transform>
+				<rotate angle="90" x="0" y="1" z="0"/>
+			</transform>
+			<group>
+				<transform>
+					<translate x="2" y="2" z="2"/>
+				</transform>
+				<models>
+					<model file="cone.3d"/>
+				</models>
+				<group>
+					<transform>
+						<translate x="2" y="2" z="2"/>
+					</transform>
+					<models>
+						<model file="cone.3d"/>
+					</models>
+				</group>
+			</group>
+		</group>
+	</group>
 </world>

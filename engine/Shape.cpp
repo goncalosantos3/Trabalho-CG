@@ -1,5 +1,10 @@
 #include "headers/Shape.h"
 
+Shape::~Shape()
+{
+	pontos.clear();
+}
+
 void Shape::addPoint(Point p)
 {
 	this->pontos.push_back(p);

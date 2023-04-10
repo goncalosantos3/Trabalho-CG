@@ -1,20 +1,23 @@
 #pragma once
 
-typedef enum { Translate=0, Rotate=1, Scale=2 } TransfType;
+enum TransfType { Translate=0, Rotate=1, Scale=2 };
 
 class Transformation
 {
 	private:
-		TransfType type;
+		enum TransfType type;
 		float x, y, z;
+		float angle;
 
 	public:
 		Transformation(){};
-		Transformation(TransfType type, float x, float y, float z): type(type), x(x), y(y), z(z){};
+		Transformation(enum TransfType type, float x, float y, float z): type(type), x(x), y(y), z(z), angle(-1){};
+		Transformation(enum TransfType type, float x, float y, float z, float angle): type(type), x(x), y(y), z(z), angle(angle){};
 		~Transformation(){};
 
-		TransfType getType();
+		enum TransfType getType();
 		float getX();
 		float getY();
 		float getZ();
+		float getAngle();
 };

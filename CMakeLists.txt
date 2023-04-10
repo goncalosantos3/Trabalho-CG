@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(CMAKE_BUILD_TYPE Debug)
 # Project Name
 PROJECT(engine)
 
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Shape.cpp engine/Parser.cpp engine/Point.cpp)
+add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Group.cpp engine/Shape.cpp engine/Parser.cpp engine/Point.cpp engine/Transformation.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})

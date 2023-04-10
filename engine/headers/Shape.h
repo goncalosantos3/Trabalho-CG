@@ -12,7 +12,8 @@ private:
 
 public:
 	Shape() {};
-	~Shape() {};
+	Shape(const Shape& shape):pontos(shape.pontos){};
+	~Shape();
 
 	void addPoint(Point p);
 	friend std::ostream& operator<<(std::ostream& stream, const Shape& vec);

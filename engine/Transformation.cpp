@@ -19,3 +19,8 @@ float Transformation::getZ()
 {
 	return this->z;
 }
+
+float Transformation::getAngle()
+{
+	return this->angle;
+}

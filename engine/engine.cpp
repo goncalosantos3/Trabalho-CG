@@ -1,4 +1,6 @@
 #include "headers/Parser.h"
+#include <GL/gl.h>
+#include <vector>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -12,7 +14,61 @@
 std::pair<float, float> window;
 Camera* camera;
 float alpha, beta, radius;
-std::vector<Shape*> models;
+std::vector<Group*> rootGroups;
+
+void applyTransformations(Group* g)
+{
+	for (Transformation *t : g->getTransformations())
+	{
+		float x = t->getX(),
+					y = t->getY(),
+					z = t->getZ(),
+					angle = t->getAngle();
+		switch(t->getType())
+		{
+			case Translate:
+				glTranslatef(x,y,z);
+				break;
+			case Rotate:
+				glRotatef(angle, x,y,z);
+				break;
+			case Scale:
+				glScalef(x,y,z);
+				break;
+		}
+	}
+}
+
+void drawModels(std::vector<Shape*> models)
+{
+	glBegin(GL_TRIANGLES);
+		for (Shape *s : models)
+		{
+			std::vector<Point> points = s->getPoints();
+			for (int i=0 ; i<points.size() ; i+=3)
+			{
+				Point p = points.at(i);
+				glVertex3f(p.getX(), p.getY(), p.getZ());
+				p = points.at(i+1);
+				glVertex3f(p.getX(), p.getY(), p.getZ());
+				p = points.at(i+2);
+				glVertex3f(p.getX(), p.getY(), p.getZ());
+			}
+		}
+	glEnd();
+}
+
+void drawGroups(std::vector<Group*> groups)
+{
+	for (Group *g : groups)
+	{
+		glPushMatrix();
+		applyTransformations(g);
+		drawModels(g->getModels());
+		drawGroups(g->getGroups());
+		glPopMatrix();
+	}
+}
 
 void renderScene(void)
 {
@@ -43,22 +99,7 @@ void renderScene(void)
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
-	glBegin(GL_TRIANGLES);
-	for (Shape* forma : models)
-	{
-		std::vector<Point> pontos = forma->getPoints();
-		for (int i = 0; i < pontos.size(); i += 3)
-		{
-			Point p1 = pontos.at(i);
-			Point p2 = pontos.at(i+1);
-			Point p3 = pontos.at(i+2);
-
-			glVertex3f(p1.getX(), p1.getY(), p1.getZ());
-			glVertex3f(p2.getX(), p2.getY(), p2.getZ());
-			glVertex3f(p3.getX(), p3.getY(), p3.getZ());
-		}
-	}
-	glEnd();
+	drawGroups(rootGroups);
 
 	glutSwapBuffers();
 }
@@ -129,14 +170,14 @@ int main(int argc, char **argv)
 	if (argc < 2)
 	   return 1;
 
-    Parser parser;
+	Parser parser;
 
-    if (parser.parseXML(argv[1]))
+	if (parser.parseXML(argv[1]))
 		return 1;
 	
 	window = parser.getWindow();
 	camera = parser.getCamera();
-	models = parser.getModels();
+	rootGroups = parser.getGroups();
 
 	Point *cameraPosition = camera->getPosition();
 
@@ -166,5 +207,7 @@ int main(int argc, char **argv)
 	// enter GLUT's main cycle
 	glutMainLoop();
 
-    return 0;
+	for (Group *g : rootGroups)
+		delete g;
+	return 0;
 }
