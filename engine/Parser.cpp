@@ -130,21 +130,25 @@ int Parser::parseTransformations(vector<Transformation*>* transformations, rapid
 	{
 		Transformation *transf = parseTransformation(transformationNode);
 		int error = transf == NULL;
-		bool *verify;
-		switch (transf->getType())
+		if (!error)
 		{
-			case Translate: verify = &transl; break;
-			case Rotate: verify = &rot; break;
-			default: verify = &scale; break;
+			bool *verify;
+			switch (transf->getType())
+			{
+				case Translate: verify = &transl; break;
+				case Rotate: verify = &rot; break;
+				default: verify = &scale; break;
+			}
+			if (!(*verify))
+				*verify = true;
+			else
+			{
+				cerr << "Error: Can't have more than 1 transformation of the same type!!" << endl;
+				return 1;
+			}
+			transformations->push_back(transf);
+		
 		}
-		if (!(*verify) && !error)
-			*verify = true;
-		else
-		{
-			cerr << "Error: Can't have more than 1 transmodeltion of the same type!!" << endl;
-			return 1;
-		}
-		transformations->push_back(transf);
 	}
 
 	return 0;
@@ -184,7 +188,7 @@ int Parser::parseGroup(Group* group, rapidxml::xml_node<>* groupNode)
 
 	if (error) // if transmodeltions is NULL that means that an exception occured during the parse
 	{
-		cerr << "Error parsing Transmodeltions" << endl;
+		cerr << "Error parsing Transformations" << endl;
 		return error;
 	}
 	group->addTransformations(transformations);
