@@ -16,6 +16,14 @@ Camera* camera;
 float alpha, beta, radius;
 std::vector<Group*> rootGroups;
 
+
+int timebase;
+float frames;
+float timePassed;
+float fps;
+char *initialTitle;
+char title[256];
+
 void applyTransformations(Group* g)
 {
 	for (Transformation *t : g->getTransformations())
@@ -100,6 +108,18 @@ void renderScene(void)
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	drawGroups(rootGroups);
+
+	timePassed = glutGet(GLUT_ELAPSED_TIME);
+	frames++;
+	if (timePassed - timebase > 1000)
+	{
+		fps = frames*1000.0 / (timePassed-timebase);
+		timebase = timePassed;
+		frames = 0;
+	}
+
+	snprintf(title, 256, "%s %f", initialTitle, fps);
+	glutSetWindowTitle(title);
 
 	glutSwapBuffers();
 }
@@ -197,6 +217,8 @@ int main(int argc, char **argv)
 	glutReshapeFunc(changeSize);
 	glutIdleFunc(renderScene);
 
+	timebase = glutGet(GLUT_ELAPSED_TIME);
+	initialTitle = argv[1];
 
 	glutSpecialFunc(processSpecialKeys);
 
