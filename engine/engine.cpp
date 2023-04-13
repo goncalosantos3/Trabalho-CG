@@ -1,5 +1,7 @@
 #include "headers/Parser.h"
+#include <GL/freeglut_std.h>
 #include <GL/gl.h>
+#include <iostream>
 #include <vector>
 
 #ifdef __APPLE__
@@ -15,6 +17,10 @@ std::pair<float, float> window;
 Camera* camera;
 float alpha, beta, radius;
 std::vector<Group*> rootGroups;
+std::vector<Shape*> allModels;
+
+unsigned int picked;
+int w,h;
 
 
 int timebase;
@@ -23,6 +29,19 @@ float timePassed;
 float fps;
 char *initialTitle;
 char title[256];
+
+
+
+float getShapeColorCode(std::string name, std::string filename)
+{
+	for (int i=0 ; i<allModels.size() ; i++)
+	{
+		Shape* model = allModels.at(i);
+		if (model->getName() == name && model->getFile() == filename)
+			return (i+1.0f);
+	}
+	return 0;
+}
 
 void applyTransformations(Group* g)
 {
@@ -47,11 +66,16 @@ void applyTransformations(Group* g)
 	}
 }
 
-void drawModels(std::vector<Shape*> models)
+void drawModels(std::vector<Shape*> models, bool paint)
 {
 	glBegin(GL_TRIANGLES);
 		for (Shape *s : models)
 		{
+			if (paint)
+			{
+				float code = getShapeColorCode(s->getName(), s->getFile())/255.0f;
+				glColor3f(code, code, code);
+			}
 			std::vector<Point> points = s->getPoints();
 			for (int i=0 ; i<points.size() ; i+=3)
 			{
@@ -66,16 +90,104 @@ void drawModels(std::vector<Shape*> models)
 	glEnd();
 }
 
-void drawGroups(std::vector<Group*> groups)
+void drawGroups(std::vector<Group*> groups, bool paint)
 {
 	for (Group *g : groups)
 	{
 		glPushMatrix();
 		applyTransformations(g);
-		drawModels(g->getModels());
-		drawGroups(g->getGroups());
+		drawModels(g->getModels(), paint);
+		drawGroups(g->getGroups(), paint);
 		glPopMatrix();
 	}
+}
+
+unsigned char  picking(int x, int y) {
+
+	// se o rato estiver fora do ecra nao seleciona nada
+	if (x<0 || x>w || y<0 || y>h) return 0;
+	// desligar iluminacao
+	glDisable(GL_LIGHTING);
+	// desligar texturas
+	glDisable(GL_TEXTURE_2D);
+	// definir o modo de desenho como fill
+	glPolygonMode(GL_FRONT, GL_FILL);
+
+	// limpar o buffer de cor
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+
+	Point* position = camera->getPosition(),
+		* lookAt = camera->getLookAt(),
+		* up = camera->getUp();
+	gluLookAt(position->getX(), position->getY(), position->getZ(),
+			  lookAt->getX(), lookAt->getY(), lookAt->getZ(),
+			  up->getX(), up->getY(), up->getZ());
+
+
+	// definir a funcao de profundidade como <=
+	glDepthFunc(GL_LEQUAL);
+
+	// definir cor a preto para desenhar tudo a preto
+	glColor3f(0.0f, 0.0f, 0.0f);
+
+	drawGroups(rootGroups, true);
+
+	GLint viewport[4];
+	unsigned char res[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	// ler os valores de cor do pixel na posicao x,y
+	glReadPixels(x, viewport[3]-y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, res);
+
+	// redefenir a funcao de profundidade
+	glDepthFunc(GL_LESS);
+	// voltar a ativar a iluminacao
+	// glEnable(GL_LIGHTING);
+	// voltar a ativar as texturas
+	glEnable(GL_TEXTURE_2D);
+	// voltar a desenhar so as linhas dos triangulos
+	glPolygonMode(GL_FRONT, GL_LINE);
+	
+	return res[0];
+}
+
+void renderText() {
+
+	char str[40];
+	if (picked+1 != 0)
+	{
+		Shape *model = allModels.at(picked);
+		if (model->getName() != "")
+			snprintf(str, 40, "Picked %s!!", allModels.at(picked)->getName().c_str());
+		else
+			snprintf(str, 40, "Picked %s!!", allModels.at(picked)->getFile().c_str());
+	}
+	else
+		snprintf(str, 40, "Nothing Selected!!");
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	
+	// Fazer com que as coordenadas corespondam às coordenadas no ecrã (esquerda->direita, cima->baixo)
+	gluOrtho2D(0, w, 0, h);
+
+	glMatrixMode(GL_MODELVIEW);
+	glDisable(GL_DEPTH_TEST);
+	glPushMatrix();
+	glLoadIdentity();
+	glRasterPos2d(10, 20);
+
+	for (char *c = str ; *c ; c++)
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+
+	// voltar às matrizes anteriores e voltar a ativar o teste de profundidade
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 void renderScene(void)
@@ -107,7 +219,9 @@ void renderScene(void)
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
-	drawGroups(rootGroups);
+	drawGroups(rootGroups, false);
+
+	renderText();
 
 	timePassed = glutGet(GLUT_ELAPSED_TIME);
 	frames++;
@@ -116,16 +230,18 @@ void renderScene(void)
 		fps = frames*1000.0 / (timePassed-timebase);
 		timebase = timePassed;
 		frames = 0;
+		snprintf(title, 256, "%s %f", initialTitle, fps);
+		glutSetWindowTitle(title);
 	}
-
-	snprintf(title, 256, "%s %f", initialTitle, fps);
-	glutSetWindowTitle(title);
-
 	glutSwapBuffers();
 }
 
-void changeSize(int w, int h)
+// void proccessMouseMotion()
+
+void changeSize(int ww, int hh)
 {
+	w = ww;
+	h = hh;
 	// Prevent a divide by zero, when window is too short
 	// (you cant make a window with zero width).
 	if (h == 0)
@@ -185,6 +301,33 @@ void processSpecialKeys(int key, int xx, int yy) {
 
 }
 
+void processNormalKeys(unsigned char key, int x, int y) {
+
+	switch(key) {
+	
+		case 27: exit(0);
+		case 'p':
+			picked = picking(x,y) - 1;
+			if (picked+1)
+			{
+				Shape* shape = allModels.at(picked);
+				if (shape->getName() != "")
+					std::cout << "Selected Model with name \"" << shape->getName() << "\"!" << std::endl;
+				else
+					std::cout << "Selected Model with filename \"" << shape->getFile() << "\"!" << std::endl;
+			}
+			else
+				printf("Nothing selected\n");
+			break;
+	}
+	glutPostRedisplay();
+}
+
+void idle(void)
+{
+	glutPostRedisplay();
+}
+
 int main(int argc, char **argv)
 {
 	if (argc < 2)
@@ -198,6 +341,7 @@ int main(int argc, char **argv)
 	window = parser.getWindow();
 	camera = parser.getCamera();
 	rootGroups = parser.getGroups();
+	allModels = parser.getModels();
 
 	Point *cameraPosition = camera->getPosition();
 
@@ -215,12 +359,14 @@ int main(int argc, char **argv)
 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
-	glutIdleFunc(renderScene);
+	glutIdleFunc(idle);
+
 
 	timebase = glutGet(GLUT_ELAPSED_TIME);
 	initialTitle = argv[1];
 
 	glutSpecialFunc(processSpecialKeys);
+	glutKeyboardFunc(processNormalKeys);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);

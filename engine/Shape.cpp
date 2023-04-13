@@ -17,6 +17,11 @@ std::ostream& operator<<(std::ostream& stream, const Shape& forma)
 	return stream;
 }
 
+bool Shape::operator==(const Shape &shape)
+{
+	return this->file == shape.file;
+}
+
 void Shape::writeToFile (char *file)
 {
 	std::string path = "", fileStr = std::string(file);
@@ -32,7 +37,27 @@ void Shape::writeToFile (char *file)
 	f.close();
 }
 
+void Shape::setName(std::string name)
+{
+	this->name = name;
+}
+
+void Shape::setFile(std::string file)
+{
+	this->file = file;
+}
+
 std::vector<Point> Shape::getPoints()
 {
-	return this->pontos;
+	return std::vector<Point>(pontos);
+}
+
+std::string Shape::getName()
+{
+	return name;
+}
+
+std::string Shape::getFile()
+{
+	return file;
 }

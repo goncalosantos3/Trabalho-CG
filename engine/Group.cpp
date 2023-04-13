@@ -30,8 +30,6 @@ Group::~Group()
 	for (Transformation *t : this->transformations)
 		delete t;
 	this->transformations.clear();
-	for (Shape *s : this->models)
-		delete s;
 	this->models.clear();
 	for (Group *g : this->groups)
 		delete g;
