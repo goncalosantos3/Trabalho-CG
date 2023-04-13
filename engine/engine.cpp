@@ -15,12 +15,14 @@
 
 std::pair<float, float> window;
 Camera* camera;
-float alpha, beta, radius;
+float alpha, beta, radius, alphaAux, betaAux;
 std::vector<Group*> rootGroups;
 std::vector<Shape*> allModels;
 
 unsigned int picked;
 int w,h;
+int tracking = 0;
+int startX = 0, startY = 0;
 
 
 int timebase;
@@ -206,16 +208,16 @@ void renderScene(void)
 	glBegin(GL_LINES);
 		// X axis in red
 		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(-100.0f, 0.0f, 0.0f);
-		glVertex3f(100.0f, 0.0f, 0.0f);
+		glVertex3f(-1000000.0f, 0.0f, 0.0f);
+		glVertex3f(1000000.0f, 0.0f, 0.0f);
 		// Y Axis in Green
 		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(0.0f, -100.0f, 0.0f);
-		glVertex3f(0.0f, 100.0f, 0.0f);
+		glVertex3f(0.0f, -1000000.0f, 0.0f);
+		glVertex3f(0.0f, 1000000.0f, 0.0f);
 		// Z Axis in Blue
 		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f, -100.0f);
-		glVertex3f(0.0f, 0.0f, 100.0f);
+		glVertex3f(0.0f, 0.0f, -1000000.0f);
+		glVertex3f(0.0f, 0.0f, 1000000.0f);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -323,6 +325,85 @@ void processNormalKeys(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
+void processMouseButtons(int button, int state, int xx, int yy) 
+{
+	if (state == GLUT_DOWN)  {
+		startX = xx;
+		startY = yy;
+		if (button == GLUT_LEFT_BUTTON)
+			tracking = 1;
+		else if (button == GLUT_RIGHT_BUTTON)
+			tracking = 2;
+		else { // Middle button
+			tracking = 0;
+			picked = picking(xx,yy) - 1;
+			if (picked+1)
+			{
+				Shape* shape = allModels.at(picked);
+				if (shape->getName() != "")
+					std::cout << "Selected Model with name \"" << shape->getName() << "\"!" << std::endl;
+				else
+					std::cout << "Selected Model with filename \"" << shape->getFile() << "\"!" << std::endl;
+			}
+			else
+				printf("Nothing selected\n");
+			glutPostRedisplay();
+		}
+	}
+	else if (state == GLUT_UP) {
+		if (tracking == 1) {
+			alphaAux += (xx - startX);
+			betaAux += (yy - startY);
+		}
+		else if (tracking == 2) {
+			
+			radius -= yy - startY;
+			if (radius < 3)
+				radius = 3.0;
+		}
+		tracking = 0;
+	}
+}
+
+void processMouseMotion(int xx, int yy)
+{
+
+	int deltaX, deltaY;
+	int alphaAux, betaAux;
+	int rAux;
+
+	if (!tracking)
+		return;
+
+	deltaX = xx - startX;
+	deltaY = yy - startY;
+
+	if (tracking == 1) {
+
+
+		alpha = alphaAux + deltaX;
+		beta = betaAux + deltaY;
+
+		if (beta > 85.0)
+			beta = 85.0;
+		else if (beta < -85.0)
+			beta = -85.0;
+
+		rAux = radius;
+	}
+	else if (tracking == 2) {
+
+		alpha = alphaAux;
+		beta = betaAux;
+		rAux = radius - deltaY;
+		if (rAux < 3)
+			rAux = 3;
+	}
+	camera->setPosition(new Point(radius*cos(beta)*sin(alpha), radius*sin(beta), radius*cos(beta)*cos(alpha)));
+
+	glutPostRedisplay();
+}
+
 void idle(void)
 {
 	glutPostRedisplay();
@@ -367,6 +448,8 @@ int main(int argc, char **argv)
 
 	glutSpecialFunc(processSpecialKeys);
 	glutKeyboardFunc(processNormalKeys);
+	glutMouseFunc(processMouseButtons);
+	glutMotionFunc(processMouseMotion);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);

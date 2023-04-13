@@ -1,0 +1,108 @@
+<world>
+	<window width="1000" height="1000" />
+	<camera> 
+		<position x="300" y="0" z="000" />
+		<lookAt x="0" y="0" z="0" />
+		<up x="0" y="1" z="0" />
+		<projection fov="45" near="10" far="20000" /> 
+	</camera>
+	<group>
+			<group>
+					<models>
+							<model file="sun.3d" name="Sun">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="12235.111" y="0" z="0"/> -->
+							<translate x="400.111" y="0" z="0"/>
+							</transform>
+					<models>
+							<model file="mercury.3d" name="Mercury">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="15780.629" y="0" z="0"/> -->
+							<translate x="420.629" y="0" z="0"/>
+					</transform>
+					<models>
+							<model file="venus.3d" name="Venus">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="8238.718" y="0" z="0"/> -->
+							<translate x="440.718" y="0" z="0"/>
+					</transform>
+					<models>
+							<model file="earth.3d" name="Earth">
+							</model>
+					</models>
+							<group>
+									<transform>
+											<!-- <translate x="30546.821" y="0" z="0"/> -->
+											<translate x="445.821" y="0" z="0"/>
+									</transform>
+									<models>
+											<model file="moon.3d" name="Moon">
+											</model>
+									</models>
+							</group>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="11427.226" y="0" z="0"/> -->
+							<translate x="460.226" y="0" z="0"/>
+					</transform>
+					<scale X="1.39" Y="1.39" Z="1.39"/>
+					<models>
+							<model file="mars.3d" name="Mars">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="158859.803" y="0" z="0"/> -->
+							<translate x="500.803" y="0" z="0"/>
+					</transform>
+					<models>
+							<model file="jupiter.3d" name="Jupiter">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="134357.006" y="0" z="0"/> -->
+							<translate x="560.006" y="0" z="0"/>
+					</transform>
+					<models>
+							<model file="saturn.3d" name="Saturn">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="285865.970" y="0" z="0"/> -->
+							<translate x="610.970" y="0" z="0"/>
+					</transform>
+					<models>
+							<model file="uranus.3d" name="YourAnus">
+							</model>
+					</models>
+			</group>
+			<group>
+					<transform>
+							<!-- <translate x="922244.538" y="0" z="0"/> -->
+							<translate x="650.538" y="0" z="0"/>
+					</transform>
+					<models>
+							<model file="neptune.3d" name="Neptune">
+							</model>
+					</models>
+			</group>
+	</group>
+</world>
