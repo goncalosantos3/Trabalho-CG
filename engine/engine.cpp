@@ -172,7 +172,7 @@ void renderText() {
 	else
 		snprintf(str, 40, "Nothing Selected!!");
 	Point* pos = camera->getPosition();
-	snprintf(str2, 128, "Pos: %f %f %f", pos->getX(), pos->getY(), pos->getZ());
+	snprintf(str2, 128, "Pos: %f %f %f, CamSpeed: %f", pos->getX(), pos->getY(), pos->getZ(), camSpeed);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -303,14 +303,6 @@ void processSpecialKeys(int key, int xx, int yy) {
 		if (beta < -0.05f)
 			beta = -0.05f;
 		break;
-
-	case GLUT_KEY_PAGE_DOWN: radius -= 0.1f;
-		if (radius < 0.1f)
-			radius = 0.1f;
-		break;
-
-	case GLUT_KEY_PAGE_UP: radius += 0.1f; break;
-
 	}
 	camera->setAlpha(alpha);
 	camera->setBeta(beta);
@@ -369,7 +361,12 @@ void processNormalKeys(unsigned char key, int x, int y) {
 		case 'a':
 			moveCamera(0,-1);
 			break;
-
+		case 'z':
+			camSpeed *= 2.0f;
+			break;
+		case 'x':
+			camSpeed /= 2.0f;
+			break;
 	}
 	glutPostRedisplay();
 }
@@ -465,6 +462,8 @@ int main(int argc, char **argv)
 	alpha = camera->getAlpha();
 	beta = camera->getBeta();
 	radius = camera->getRadius();
+
+	printf("Instructions:\n\tMove with the 'W', 'A', 'S' and 'D' keys\n\tMove the camera with the arrow keys or with the mouse\n\tIncrease/Decrease camera Speed: 'Z'/'X'\n\tSelect a model by pointing and pressing wither middle mouse button or 'P'");
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);

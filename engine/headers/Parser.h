@@ -4,6 +4,7 @@
 #include <fstream>
 #include <utility>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "Camera.h"
 #include "Group.h"

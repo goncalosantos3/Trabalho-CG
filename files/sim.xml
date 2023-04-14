@@ -84,6 +84,7 @@
 			<models>
 				<model file="washer.3d"/>
 			</models>
+
 		</group>
 
 		<!-- Uranus -->
@@ -192,6 +193,15 @@
 			<models>
 				<model name="Saturn" file="sphere.3d" />
 			</models>
+			<group>
+				<transform>
+					<scale x="1.5" y="1.5" z="1.5"/>
+					<rotate angle="30" x="1" y="0" z="0"/>
+				</transform>
+				<models>
+					<model file="saturnRing.3d"/>
+				</models>
+			</group>
 		</group>
 
 		<!-- Uranu -->

@@ -188,7 +188,8 @@ int Parser::parseModel(Shape* model, string filename)
 	path.append(filename);
 	ifstream modelFile(path);
 
-	if (modelFile.bad())
+	struct stat buffer;
+	if (stat(path.c_str(), &buffer) != 0)
 	{
 		cerr << "Error opening file \"" << filename << "\".\nMake sure the file exists...";
 		return 1;
