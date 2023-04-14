@@ -4,7 +4,7 @@
 		<position x="-1000" y="100" z="0" />
 		<lookAt x="1000" y="0" z="0" />
 		<up x="0" y="1" z="0" />
-		<projection fov="45" near="30" far="20000" /> 
+		<projection fov="60" near="30" far="20000" /> 
 	</camera>
 	<group>
 		<!-- [> Sol <] -->
