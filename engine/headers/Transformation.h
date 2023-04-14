@@ -1,6 +1,6 @@
 #pragma once
 
-enum TransfType { Translate=0, Rotate=1, Scale=2 };
+enum TransfType { Translate=0, Rotate=1, Scale=2, Color=3 };
 
 class Transformation
 {

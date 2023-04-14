@@ -14,7 +14,7 @@ public:
 	{ 
 		// std::cout << "Libertado" << std::endl; 
 	};
-
+	
 	float getX();
 	float getY();
 	float getZ();

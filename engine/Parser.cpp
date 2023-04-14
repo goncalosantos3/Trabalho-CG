@@ -103,12 +103,20 @@ Transformation* parseTransformation(xml_node<>* transformationNode)
 {
 	if (transformationNode->type() == node_element)
 	{
+		TransfType type;
+		if (strcmp(transformationNode->name(),"color")==0)
+		{	
+			type = Color;
+			float r = strtof(transformationNode->first_attribute("r")->value(), NULL);
+			float g = strtof(transformationNode->first_attribute("g")->value(), NULL);
+			float b = strtof(transformationNode->first_attribute("b")->value(), NULL);
+			return new Transformation(type, r, g, b, -1);
+		}
 		int aux = strcmp(transformationNode->name(),"scale");
 		float x = strtof(transformationNode->first_attribute("x")->value(), NULL);
 		float y = strtof(transformationNode->first_attribute("y")->value(), NULL);
 		float z = strtof(transformationNode->first_attribute("z")->value(), NULL);
 		float angle = -1;
-		TransfType type;
 		if (aux == 0)
 			type = Scale;
 		else if (aux < 0)
@@ -129,7 +137,7 @@ int Parser::parseTransformations(vector<Transformation*>* transformations, xml_n
 		return 0;
 	xml_node<>* transformationNode;
 
-	bool transl=false, rot=false, scale=false;
+	bool transl=false, rot=false, scale=false, color=false;
 
 	for (transformationNode = transformNode->first_node() ; transformationNode ; transformationNode = transformationNode->next_sibling())
 	{
@@ -142,6 +150,7 @@ int Parser::parseTransformations(vector<Transformation*>* transformations, xml_n
 			{
 				case Translate: verify = &transl; break;
 				case Rotate: verify = &rot; break;
+				case Color: verify = &color; break;
 				default: verify = &scale; break;
 			}
 			if (!(*verify))

@@ -1,6 +1,6 @@
 #include "headers/Parser.h"
-#include <GL/freeglut_std.h>
-#include <GL/gl.h>
+//#include <GL/freeglut_std.h>
+//#include <GL/gl.h>
 #include <iostream>
 #include <vector>
 
@@ -23,6 +23,7 @@ unsigned int picked;
 int w,h;
 int tracking = 0;
 int startX = 0, startY = 0;
+float sensivity = 0.05f;
 
 
 int timebase;
@@ -63,6 +64,9 @@ void applyTransformations(Group* g)
 				break;
 			case Scale:
 				glScalef(x,y,z);
+				break;
+			case Color:
+				glColor3f(x,y,z);
 				break;
 		}
 	}
@@ -155,7 +159,7 @@ unsigned char  picking(int x, int y) {
 
 void renderText() {
 
-	char str[40];
+	char str[40], str2[128];
 	if (picked+1 != 0)
 	{
 		Shape *model = allModels.at(picked);
@@ -166,13 +170,16 @@ void renderText() {
 	}
 	else
 		snprintf(str, 40, "Nothing Selected!!");
+	Point* pos = camera->getPosition(), *lookAt = camera->getLookAt();
+	snprintf(str2, 128, "Pos: %f %f %f, LookAt: %f %f %f", pos->getX(), pos->getY(), pos->getZ(), lookAt->getX(), lookAt->getY(), lookAt->getZ());
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
 	
+	glColor3f(1.0f,1.0f,1.0f);
 	// Fazer com que as coordenadas corespondam às coordenadas no ecrã (esquerda->direita, cima->baixo)
-	gluOrtho2D(0, w, 0, h);
+	gluOrtho2D(0, w, h, 0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glDisable(GL_DEPTH_TEST);
@@ -182,6 +189,12 @@ void renderText() {
 
 	for (char *c = str ; *c ; c++)
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *c);
+	
+	glRasterPos2d(10, h-20);
+
+	for (char *c = str2; *c ; c++)
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, *c);
+		
 
 	// voltar às matrizes anteriores e voltar a ativar o teste de profundidade
 	glMatrixMode(GL_PROJECTION);
@@ -298,7 +311,10 @@ void processSpecialKeys(int key, int xx, int yy) {
 	case GLUT_KEY_PAGE_UP: radius += 0.1f; break;
 
 	}
-	camera->setPosition(new Point(radius*cos(beta)*sin(alpha), radius*sin(beta), radius*cos(beta)*cos(alpha)));
+	Point *cameraPos = camera->getPosition();
+	camera->setLookAt(new Point(cameraPos->getX() + radius*sin(alpha), 
+								  cameraPos->getY() + radius*sin(beta), 
+								  cameraPos->getZ() + radius*cos(alpha)));
 	glutPostRedisplay();
 
 }
@@ -352,12 +368,12 @@ void processMouseButtons(int button, int state, int xx, int yy)
 	}
 	else if (state == GLUT_UP) {
 		if (tracking == 1) {
-			alphaAux += (xx - startX);
-			betaAux += (yy - startY);
+			alphaAux += (xx - startX)*sensivity;
+			betaAux += (yy - startY)*sensivity;
 		}
 		else if (tracking == 2) {
 			
-			radius -= yy - startY;
+			radius -= (yy - startY);
 			if (radius < 3)
 				radius = 3.0;
 		}
@@ -381,12 +397,12 @@ void processMouseMotion(int xx, int yy)
 	if (tracking == 1) {
 
 
-		alpha = alphaAux + deltaX;
-		beta = betaAux + deltaY;
+		alpha = alphaAux + deltaX*sensivity;
+		beta = betaAux + deltaY*sensivity;
 
-		if (beta > 85.0)
+		if (beta*180/M_PI > 85.0)
 			beta = 85.0;
-		else if (beta < -85.0)
+		else if (beta*180/M_PI < -85.0)
 			beta = -85.0;
 
 		rAux = radius;
@@ -399,7 +415,10 @@ void processMouseMotion(int xx, int yy)
 		if (rAux < 3)
 			rAux = 3;
 	}
-	camera->setPosition(new Point(radius*cos(beta)*sin(alpha), radius*sin(beta), radius*cos(beta)*cos(alpha)));
+	Point *cameraPos = camera->getPosition();
+	camera->setLookAt(new Point(cameraPos->getX() + radius*sin(alpha), 
+								  cameraPos->getY() + radius*sin(beta), 
+								  cameraPos->getZ() + radius*cos(alpha)));
 
 	glutPostRedisplay();
 }
@@ -424,11 +443,18 @@ int main(int argc, char **argv)
 	rootGroups = parser.getGroups();
 	allModels = parser.getModels();
 
-	Point *cameraPosition = camera->getPosition();
+	Point *cPos = camera->getPosition();
+	Point *lAt = camera->getLookAt();
 
-	radius = sqrt(cameraPosition->getX()*cameraPosition->getX() + cameraPosition->getY()*cameraPosition->getY() + cameraPosition->getZ()*cameraPosition->getZ());
-	beta = asin(cameraPosition->getY()/radius);
-	alpha = asin(cameraPosition->getX()/(radius*cos(beta)));
+	radius = sqrt((cPos->getX()*cPos->getX() - lAt->getX()*lAt->getX()) +
+				  (cPos->getY()*cPos->getY() - lAt->getY()*lAt->getY()) +
+				  (cPos->getZ()*cPos->getZ() - lAt->getZ()*lAt->getZ()));
+
+	//radius = sqrt(cameraPosition->getX()*cameraPosition->getX() + cameraPosition->getY()*cameraPosition->getY() + cameraPosition->getZ()*cameraPosition->getZ());
+	beta = asin((lAt->getY()-cPos->getY())/radius);
+	//beta = asin(cPos->getY()/radius);
+	alpha = asin((lAt->getX()-cPos->getY())/radius);
+	//alpha = asin(cPos->getX()/(radius*cos(beta)));
 	
 
 	glutInit(&argc, argv);
