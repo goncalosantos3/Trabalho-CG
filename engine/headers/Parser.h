@@ -7,7 +7,7 @@
 
 #include "Camera.h"
 #include "Group.h"
-#include "Shape.h"
+#include "../../common/headers/Shape.h"
 #include "rapidxml.hpp"
 
 class Parser

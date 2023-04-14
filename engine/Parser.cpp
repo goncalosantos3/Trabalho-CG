@@ -1,6 +1,4 @@
 #include "headers/Parser.h"
-#include "headers/Transformation.h"
-#include "headers/rapidxml.hpp"
 
 using namespace std;
 using namespace rapidxml;
@@ -107,9 +105,9 @@ Transformation* parseTransformation(xml_node<>* transformationNode)
 		if (strcmp(transformationNode->name(),"color")==0)
 		{	
 			type = Color;
-			float r = strtof(transformationNode->first_attribute("r")->value(), NULL);
-			float g = strtof(transformationNode->first_attribute("g")->value(), NULL);
-			float b = strtof(transformationNode->first_attribute("b")->value(), NULL);
+			float r = strtof(transformationNode->first_attribute("r")->value(), NULL)/255.0f;
+			float g = strtof(transformationNode->first_attribute("g")->value(), NULL)/255.0f;
+			float b = strtof(transformationNode->first_attribute("b")->value(), NULL)/255.0f;
 			return new Transformation(type, r, g, b, -1);
 		}
 		int aux = strcmp(transformationNode->name(),"scale");
@@ -178,9 +176,12 @@ int Parser::parseModel(Shape* model, string filename)
 			cerr << "Error: Only one Model can have the same \"name\" attribute!" << endl;
 			return 1;
 		}
-		for (Point p : aux->getPoints())
-			model->addPoint(p);
-		return 0;
+		if (model->getName() == aux->getName() && aux->getPoints().size() > 0)
+		{
+			for (Point p : aux->getPoints())
+				model->addPoint(p);
+			return 0;
+		}
 	}
 
 	string path = "../files/";
@@ -194,7 +195,6 @@ int Parser::parseModel(Shape* model, string filename)
 	}
 
 	string line;
-
 	while(getline(modelFile, line))
 	{
 		float x,y,z;

@@ -1,6 +1,7 @@
 #include "headers/Parser.h"
-//#include <GL/freeglut_std.h>
-//#include <GL/gl.h>
+#include <GL/gl.h>
+#include <GL/freeglut_std.h>
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -15,15 +16,15 @@
 
 std::pair<float, float> window;
 Camera* camera;
-float alpha, beta, radius, alphaAux, betaAux;
+float alpha, beta, radius;
 std::vector<Group*> rootGroups;
 std::vector<Shape*> allModels;
 
-unsigned int picked;
+unsigned int picked = -1;
 int w,h;
 int tracking = 0;
 int startX = 0, startY = 0;
-float sensivity = 0.05f;
+float sensivity = 0.05f, camSpeed = 5.0f;
 
 
 int timebase;
@@ -150,7 +151,7 @@ unsigned char  picking(int x, int y) {
 	// voltar a ativar a iluminacao
 	// glEnable(GL_LIGHTING);
 	// voltar a ativar as texturas
-	glEnable(GL_TEXTURE_2D);
+	// glEnable(GL_TEXTURE_2D);
 	// voltar a desenhar so as linhas dos triangulos
 	glPolygonMode(GL_FRONT, GL_LINE);
 	
@@ -170,8 +171,8 @@ void renderText() {
 	}
 	else
 		snprintf(str, 40, "Nothing Selected!!");
-	Point* pos = camera->getPosition(), *lookAt = camera->getLookAt();
-	snprintf(str2, 128, "Pos: %f %f %f, LookAt: %f %f %f", pos->getX(), pos->getY(), pos->getZ(), lookAt->getX(), lookAt->getY(), lookAt->getZ());
+	Point* pos = camera->getPosition();
+	snprintf(str2, 128, "Pos: %f %f %f", pos->getX(), pos->getY(), pos->getZ());
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -293,14 +294,14 @@ void processSpecialKeys(int key, int xx, int yy) {
 
 	case GLUT_KEY_UP:
 		beta += 0.1f;
-		if (beta > 1.5f)
-			beta = 1.5f;
+		if (beta > 3.1f)
+			beta = 3.1f;
 		break;
 
 	case GLUT_KEY_DOWN:
 		beta -= 0.1f;
-		if (beta < -1.5f)
-			beta = -1.5f;
+		if (beta < -0.05f)
+			beta = -0.05f;
 		break;
 
 	case GLUT_KEY_PAGE_DOWN: radius -= 0.1f;
@@ -311,12 +312,31 @@ void processSpecialKeys(int key, int xx, int yy) {
 	case GLUT_KEY_PAGE_UP: radius += 0.1f; break;
 
 	}
-	Point *cameraPos = camera->getPosition();
-	camera->setLookAt(new Point(cameraPos->getX() + radius*sin(alpha), 
-								  cameraPos->getY() + radius*sin(beta), 
-								  cameraPos->getZ() + radius*cos(alpha)));
+	camera->setAlpha(alpha);
+	camera->setBeta(beta);
+	camera->updateLookAt();
 	glutPostRedisplay();
 
+}
+
+void moveCamera(int fb, int lr)
+{
+	// if the movement is front or back, fb is +1 if front and -1 if back
+	if (fb!=0)
+	{
+		Point* camPos = camera->getPosition();
+		camera->setPosition(new Point(camPos->getX() + fb * camSpeed * sin(alpha),
+																	camPos->getY() - fb * camSpeed * cos(beta),
+																	camPos->getZ() + fb * camSpeed * cos(alpha)));
+		camera->updateLookAt();
+		return;
+	}
+	// lr == +1 -> right movement, lr == -1 -> left movement
+	Point* camPos = camera->getPosition();
+	camera->setPosition(new Point(camPos->getX() - lr * camSpeed * cos(alpha),
+																camPos->getY(),
+																camPos->getZ() + lr * camSpeed * sin(alpha)));
+	camera->updateLookAt();
 }
 
 void processNormalKeys(unsigned char key, int x, int y) {
@@ -337,20 +357,32 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			else
 				printf("Nothing selected\n");
 			break;
+		case 'w':
+			moveCamera(1,0);
+			break;
+		case 's':
+			moveCamera(-1,0);
+			break;
+		case 'd':
+			moveCamera(0,1);
+			break;
+		case 'a':
+			moveCamera(0,-1);
+			break;
+
 	}
 	glutPostRedisplay();
 }
 
 void processMouseButtons(int button, int state, int xx, int yy) 
 {
+	int alphaAux, betaAux;
 	if (state == GLUT_DOWN)  {
 		startX = xx;
 		startY = yy;
 		if (button == GLUT_LEFT_BUTTON)
 			tracking = 1;
-		else if (button == GLUT_RIGHT_BUTTON)
-			tracking = 2;
-		else { // Middle button
+		else if (button == GLUT_MIDDLE_BUTTON) { // Middle button
 			tracking = 0;
 			picked = picking(xx,yy) - 1;
 			if (picked+1)
@@ -368,14 +400,10 @@ void processMouseButtons(int button, int state, int xx, int yy)
 	}
 	else if (state == GLUT_UP) {
 		if (tracking == 1) {
-			alphaAux += (xx - startX)*sensivity;
-			betaAux += (yy - startY)*sensivity;
-		}
-		else if (tracking == 2) {
-			
-			radius -= (yy - startY);
-			if (radius < 3)
-				radius = 3.0;
+			alpha += (xx - startX)*sensivity;
+			camera->setAlpha(alpha);
+			beta += (yy - startY)*sensivity;
+			camera->setBeta(beta);
 		}
 		tracking = 0;
 	}
@@ -383,9 +411,8 @@ void processMouseButtons(int button, int state, int xx, int yy)
 
 void processMouseMotion(int xx, int yy)
 {
-
-	int deltaX, deltaY;
-	int alphaAux, betaAux;
+	float alphaAux, betaAux;
+	float deltaX, deltaY;
 	int rAux;
 
 	if (!tracking)
@@ -394,32 +421,22 @@ void processMouseMotion(int xx, int yy)
 	deltaX = xx - startX;
 	deltaY = yy - startY;
 
-	if (tracking == 1) {
+	if (tracking) {
 
+		alphaAux = alpha + deltaX*sensivity;
+		betaAux = beta + deltaY*sensivity;
 
-		alpha = alphaAux + deltaX*sensivity;
-		beta = betaAux + deltaY*sensivity;
-
-		if (beta*180/M_PI > 85.0)
-			beta = 85.0;
-		else if (beta*180/M_PI < -85.0)
-			beta = -85.0;
+		if (betaAux > 3.1f)
+			betaAux = 3.1f;
+		else if (betaAux < 0.05f)
+			betaAux = 0.05f;
 
 		rAux = radius;
 	}
-	else if (tracking == 2) {
-
-		alpha = alphaAux;
-		beta = betaAux;
-		rAux = radius - deltaY;
-		if (rAux < 3)
-			rAux = 3;
-	}
-	Point *cameraPos = camera->getPosition();
-	camera->setLookAt(new Point(cameraPos->getX() + radius*sin(alpha), 
-								  cameraPos->getY() + radius*sin(beta), 
-								  cameraPos->getZ() + radius*cos(alpha)));
-
+	Point* camPos = camera->getPosition();
+	camera->setLookAt(new Point(camPos->getX() + radius*sin(alphaAux),
+															camPos->getY() - radius*cos(betaAux),
+															camPos->getZ() + radius*cos(alphaAux)));
 	glutPostRedisplay();
 }
 
@@ -427,6 +444,7 @@ void idle(void)
 {
 	glutPostRedisplay();
 }
+
 
 int main(int argc, char **argv)
 {
@@ -443,19 +461,10 @@ int main(int argc, char **argv)
 	rootGroups = parser.getGroups();
 	allModels = parser.getModels();
 
-	Point *cPos = camera->getPosition();
-	Point *lAt = camera->getLookAt();
-
-	radius = sqrt((cPos->getX()*cPos->getX() - lAt->getX()*lAt->getX()) +
-				  (cPos->getY()*cPos->getY() - lAt->getY()*lAt->getY()) +
-				  (cPos->getZ()*cPos->getZ() - lAt->getZ()*lAt->getZ()));
-
-	//radius = sqrt(cameraPosition->getX()*cameraPosition->getX() + cameraPosition->getY()*cameraPosition->getY() + cameraPosition->getZ()*cameraPosition->getZ());
-	beta = asin((lAt->getY()-cPos->getY())/radius);
-	//beta = asin(cPos->getY()/radius);
-	alpha = asin((lAt->getX()-cPos->getY())/radius);
-	//alpha = asin(cPos->getX()/(radius*cos(beta)));
-	
+	camera->calculateAngles();
+	alpha = camera->getAlpha();
+	beta = camera->getBeta();
+	radius = camera->getRadius();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);

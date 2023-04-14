@@ -1,6 +1,4 @@
 #include "headers/Group.h"
-#include "headers/Transformation.h"
-
 
 Group::Group()
 {
