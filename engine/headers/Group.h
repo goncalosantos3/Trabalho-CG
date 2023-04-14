@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Shape.h"
+#include "../../common/headers/Shape.h"
 #include "Transformation.h"
 
 #include <vector>

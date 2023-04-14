@@ -1,0 +1,232 @@
+<world>
+	<window width="1000" height="1000" />
+	<camera> 
+		<position x="-1000" y="100" z="0" />
+		<lookAt x="1000" y="0" z="0" />
+		<up x="0" y="1" z="0" />
+		<projection fov="60" near="30" far="20000" /> 
+	</camera>
+	<group>
+		<!-- [> Sol <] -->
+		<group>
+			<transform>
+				<scale x="60" y="60" z="60"/>
+				<color r="255" g="140" b="0"/>
+			</transform>
+			<models>
+				<model name="sun" file="sphere.3d"/>
+			</models>
+		</group>
+
+		<!-- [> Orbitas <] -->
+
+		<!-- Mercurio -->
+		<group>
+			<transform>
+				<scale x="219" y="1" z="219"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+		<!-- Venus -->
+		<group>
+			<transform>
+				<scale x="440" y="1" z="440"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+		<!-- Terra -->
+		<group>
+			<transform>
+				<scale x="615" y="1" z="615"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+		<!-- Marte -->
+		<group>
+			<transform>
+				<scale x="1020" y="1" z="1020"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+		<!-- Jupiter -->
+		<group>
+			<transform>
+				<scale x="3033" y="1" z="3033"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+		<!-- Saturno -->
+		<group>
+			<transform>
+				<scale x="5984" y="1" z="5984"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+
+		</group>
+
+		<!-- Uranus -->
+		<group>
+			<transform>
+				<scale x="12009" y="1" z="12009"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+		<!-- Uranus -->
+		<group>
+			<transform>
+				<scale x="18321" y="1" z="18321"/>
+				<color r="255" g="255" b="255"/>
+			</transform>
+			<models>
+				<model file="washer.3d"/>
+			</models>
+		</group>
+
+
+
+
+		<!-- Planetas -->
+		<!-- Mercurio -->
+		<group>
+			<transform>
+				<translate x="219" y="0" z="0"/>
+				<color r="186" g="184" b="181"/> 
+			</transform>
+			<models>
+				<model name="Mercury" file="sphere.3d" />
+			</models>
+		</group>
+
+		<!-- Venus -->
+		<group>
+			<transform>
+				<translate x="440" y="0" z="0"/>
+				<color r="237" g="184" b="100"/> 
+				<scale x="2.5" y="2.5" z="2.5"/>
+			</transform>
+			<models>
+				<model name="Venus" file="sphere.3d" />
+			</models>
+		</group>
+
+		<!-- Terra -->
+		<group>
+			<transform>
+				<translate x="615" y="0" z="0"/>
+				<color r="61" g="129" b="224"/> 
+				<scale x="2.6" y="2.6" z="2.6"/>
+			</transform>
+			<models>
+				<model name="Earth" file="sphere.3d" />
+			</models>
+			<!-- Lua -->
+			<group>
+				<transform>
+					<translate x="2" y="0" z="0"/>
+					<color r="240" g="240" b="240"/>
+					<scale x="0.27" y="0.27" z="0.27"/>
+				</transform>
+				<models>
+					<model name="Moon" file="sphere.3d" />
+				</models>
+			</group>
+		</group>
+
+		<!-- Marte -->
+		<group>
+			<transform>
+				<translate x="1020" y="0" z="0"/>
+				<color r="240" g="95" b="70"/> 
+				<scale x="1.4" y="1.4" z="1.4"/>
+			</transform>
+			<models>
+				<model name="Mars" file="sphere.3d" />
+			</models>
+		</group>
+
+		<!-- Jupiter -->
+		<group>
+			<transform>
+				<translate x="3033" y="0" z="0"/>
+				<color r="169" g="148" b="179"/> 
+				<scale x="28.7" y="28.7" z="28.7"/>
+			</transform>
+			<models>
+				<model name="Jupiter" file="sphere.3d" />
+			</models>
+		</group>
+
+		<!-- Saturno -->
+		<group>
+			<transform>
+				<translate x="5984" y="0" z="0"/>
+				<color r="196" g="169" b="104"/> 
+				<scale x="23.9" y="23.9" z="23.9"/>
+			</transform>
+			<models>
+				<model name="Saturn" file="sphere.3d" />
+			</models>
+			<group>
+				<transform>
+					<scale x="1.5" y="1.5" z="1.5"/>
+					<rotate angle="30" x="1" y="0" z="0"/>
+				</transform>
+				<models>
+					<model file="saturnRing.3d"/>
+				</models>
+			</group>
+		</group>
+
+		<!-- Uranu -->
+		<group>
+			<transform>
+				<translate x="12009" y="0" z="0"/>
+				<color r="196" g="169" b="104"/> 
+				<scale x="10.4" y="10.4" z="10.4"/>
+			</transform>
+			<models>
+				<model name="Uranus" file="sphere.3d" />
+			</models>
+		</group>
+
+		<!-- Neptuno -->
+		<group>
+			<transform>
+				<translate x="18231" y="0" z="18321"/>
+				<color r="196" g="169" b="104"/> 
+				<scale x="10.1" y="10.1" z="10.1"/>
+			</transform>
+			<models>
+				<model name="Neptune" file="sphere.3d" />
+			</models>
+		</group>
+
+	</group>
+</world>

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 class Point
 {
@@ -8,8 +9,12 @@ private:
 public:
 	Point() :x(0.0f), y(0.0f), z(0.0f) {};
 	Point(float p_x, float p_y, float p_z) :x(p_x), y(p_y), z(p_z) {};
-	~Point() {};
-
+	Point(const Point& p):x(p.x), y(p.y), z(p.z){};
+	~Point() 
+	{ 
+		// std::cout << "Libertado" << std::endl; 
+	};
+	
 	float getX();
 	float getY();
 	float getZ();
