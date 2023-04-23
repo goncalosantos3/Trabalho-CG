@@ -1,32 +1,37 @@
 #include "headers/Parser.h"
-#include <GL/gl.h>
-#include <GL/freeglut_std.h>
+
+#define _USE_MATH_DEFINES
 #include <cmath>
-#include <iostream>
-#include <vector>
+#include <math.h>
+
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
+#include <GL/glew.h>
+#include<GL/gl.h>
 #include <GL/glut.h>
 #endif
 
 #include <filesystem>
-#include <math.h>
+#include <iostream>
+#include <vector>
 
+// window and model variables
 std::pair<float, float> window;
 Camera* camera;
 float alpha, beta, radius;
 std::vector<Group*> rootGroups;
 std::vector<Shape*> allModels;
 
+// mouse and camera variables
 unsigned int picked = -1;
 int w,h;
 int tracking = 0;
 int startX = 0, startY = 0;
 float sensivity = 0.05f, camSpeed = 5.0f;
 
-
+// fps count variables
 int timebase;
 float frames;
 float timePassed;
@@ -34,6 +39,9 @@ float fps;
 char *initialTitle;
 char title[256];
 
+// VBO variables
+GLuint vertices;
+int verticeCount;
 
 
 float getShapeColorCode(std::string name, std::string filename)
@@ -83,16 +91,24 @@ void drawModels(std::vector<Shape*> models, bool paint)
 				float code = getShapeColorCode(s->getName(), s->getFile())/255.0f;
 				glColor3f(code, code, code);
 			}
-			std::vector<Point> points = s->getPoints();
-			for (int i=0 ; i<points.size() ; i+=3)
-			{
-				Point p = points.at(i);
-				glVertex3f(p.getX(), p.getY(), p.getZ());
-				p = points.at(i+1);
-				glVertex3f(p.getX(), p.getY(), p.getZ());
-				p = points.at(i+2);
-				glVertex3f(p.getX(), p.getY(), p.getZ());
-			}
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, vertices);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
+			int start = s->getVBOStartIndex(), count = s->getVBOStopIndex() - start;
+			printf("%d %d\n", start, count);
+			glDrawArrays(GL_TRIANGLES, start, count);
+			glDisableClientState(GL_VERTEX_ARRAY);
+			// std::vector<Point> points = s->getPoints();
+			// for (int i=0 ; i<points.size() ; i+=3)
+			// {
+				// Point p = points.at(i);
+				// glVertex3f(p.getX(), p.getY(), p.getZ());
+				// p = points.at(i+1);
+				// glVertex3f(p.getX(), p.getY(), p.getZ());
+				// p = points.at(i+2);
+				// glVertex3f(p.getX(), p.getY(), p.getZ());
+			// }
 		}
 	glEnd();
 }
@@ -442,6 +458,75 @@ void idle(void)
 	glutPostRedisplay();
 }
 
+int findName (std::vector<std::string>* vec, std::string name)
+{
+	for (int i=0 ; i<vec->size() ; i++)
+		if (vec->at(i) == name)
+			return i;
+	return -1;
+}
+
+void setVBOindexes(std::vector<Group*> groups, 
+									 std::vector<std::string>* models,
+									 std::vector<int>* vboStartIndexes, 
+									 std::vector<int>* vboStopIndexes)
+{
+	for (Group* group : groups)
+	{
+		for (Shape* model : group->getModels())
+		{
+			int fileIdx = findName(models, model->getFile()); 
+			model->setVBOStartIndex(vboStartIndexes->at(fileIdx));
+			model->setVBOStopIndex(vboStopIndexes->at(fileIdx));
+			// printf("%s %d %d %d\n", model->getFile().c_str(), fileIdx, model->getVBOStartIndex(), model->getVBOStopIndex());
+		}
+		setVBOindexes(group->getGroups(), models, vboStartIndexes, vboStopIndexes);
+	}
+}
+
+void buildVBO()
+{
+	std::vector<std::string> setModels;
+	setModels.reserve(allModels.size());
+	std::vector<int> vboStartIndexes, vboStopIndexes;
+	vboStartIndexes.reserve(allModels.size());
+	vboStopIndexes.reserve(allModels.size());
+	
+	std::vector<float> points;
+	points.reserve(100000);
+
+	for (Shape* m : allModels)
+	{
+		int nameIdx = findName(&setModels, m->getFile());
+		if (nameIdx == -1)
+		{
+			vboStartIndexes.push_back(points.size());
+			for (Point p : m->getPoints())
+			{
+				points.push_back(p.getX());
+				points.push_back(p.getY());
+				points.push_back(p.getZ());
+			}
+			vboStopIndexes.push_back(points.size());
+			setModels.push_back(m->getFile());
+			nameIdx = setModels.size()-1;
+		}
+		m->setVBOStartIndex(vboStartIndexes.at(nameIdx));
+		m->setVBOStopIndex(vboStopIndexes.at(nameIdx));
+	}
+
+	setVBOindexes(rootGroups, &setModels, &vboStartIndexes, &vboStopIndexes);
+
+	verticeCount = points.size();
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glGenBuffers(1, &vertices);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*points.size(), points.data(), GL_STATIC_DRAW);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
+
 
 int main(int argc, char **argv)
 {
@@ -485,6 +570,11 @@ int main(int argc, char **argv)
 	glutMouseFunc(processMouseButtons);
 	glutMotionFunc(processMouseMotion);
 
+	#ifndef __APPLE__
+	glewInit();
+	#endif
+
+	buildVBO();
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);

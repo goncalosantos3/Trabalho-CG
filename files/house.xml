@@ -9,11 +9,11 @@
 	<group>
 		<transform>
 			<!-- <translate x="0" y="5" z="0"/> -->
-			<color r="1.0" g="0.75" b="0.75"/>
+			<color r="255" g="255" b="255"/>
 		</transform>
 		<models>
 			<!-- <model file="cube.3d" name="estrutura"/> -->
-			<model file="washer.3d" name="anel"/>
+			<model file="washer2.3d" name="anel"/>
 		</models>
 		<!-- <group> -->
 			<!-- <transform> -->

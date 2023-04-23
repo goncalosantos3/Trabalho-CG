@@ -47,6 +47,16 @@ void Shape::setFile(std::string file)
 	this->file = file;
 }
 
+void Shape::setVBOStartIndex(int idx)
+{
+	this->vboStartIndex = idx;
+}
+
+void Shape::setVBOStopIndex(int idx)
+{
+	this->vboStopIndex = idx;
+}
+
 std::vector<Point> Shape::getPoints()
 {
 	return std::vector<Point>(pontos);
@@ -60,4 +70,14 @@ std::string Shape::getName()
 std::string Shape::getFile()
 {
 	return file;
+}
+
+int Shape::getVBOStartIndex()
+{
+	return vboStartIndex;
+}
+
+int Shape::getVBOStopIndex()
+{
+	return vboStopIndex;
 }
