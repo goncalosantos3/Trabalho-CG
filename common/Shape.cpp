@@ -7,7 +7,7 @@ Shape::~Shape()
 
 void Shape::addPoint(Point p)
 {
-	this->pontos.push_back(p);
+	this->pontos.emplace_back(p.getX(), p.getY(), p.getZ());
 }
 
 std::ostream& operator<<(std::ostream& stream, const Shape& forma)

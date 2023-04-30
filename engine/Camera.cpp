@@ -2,32 +2,32 @@
 
 Point* Camera::getPosition()
 {
-    return this->position;
+	return this->position;
 }
 
 Point* Camera::getLookAt()
 {
-    return this->lookAt;
+	return this->lookAt;
 }
 
 Point* Camera::getUp()
 {
-    return this->up;
+	return this->up;
 }
 
 float Camera::getFov()
 {
-    return this->fov;
+	return this->fov;
 }
 
 float Camera::getNear()
 {
-    return this->near;
+	return this->near;
 }
 
 float Camera::getFar()
 {
-    return this->far;
+	return this->far;
 }
 
 float Camera::getRadius()
@@ -47,32 +47,35 @@ float Camera::getBeta()
 
 void Camera::setPosition(Point* position)
 {
-    this->position = position;
+	delete this->position;
+	this->position = position;
 }
 
 void Camera::setLookAt(Point* lookAt)
 {
-    this->lookAt = lookAt;
+	delete this->lookAt;
+	this->lookAt = lookAt;
 }
 
 void Camera::setUp(Point* up)
 {
-    this->up = up;
+	delete this->up;
+	this->up = up;
 }
 
 void Camera::setFov(float fov)
 {
-    this->fov = fov;
+	this->fov = fov;
 }
 
 void Camera::setNear(float near)
 {
-    this->near = near;
+	this->near = near;
 }
 
 void Camera::setFar(float far)
 {
-    this->far = far;
+	this->far = far;
 }
 
 void Camera::setRadius(float radius)

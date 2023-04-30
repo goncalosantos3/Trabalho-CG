@@ -21,6 +21,7 @@ Group::Group(const Group& group)
 	groups.reserve(group.groups.size());
 	for (auto& g: group.groups)
 		groups.push_back(g);
+	printf("Duplicated Group\n");
 }
 
 Group::~Group()
@@ -74,16 +75,10 @@ std::vector<Transformation*> Group::getTransformations()
 
 std::vector<Shape*> Group::getModels()
 {
-	std::vector<Shape*> dup;
-	for (Shape* s : this->models)
-		dup.push_back(new Shape(*s));
-	return dup;
+	return models;
 }
 
 std::vector<Group*> Group::getGroups()
 {
-	std::vector<Group*> dup;
-	for (Group* g : this->groups)
-		dup.push_back(new Group(*g));
-	return dup;
+	return this->groups;
 }

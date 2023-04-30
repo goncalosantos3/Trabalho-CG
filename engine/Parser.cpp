@@ -366,16 +366,10 @@ Camera* Parser::getCamera()
 
 vector<Group*> Parser::getGroups()
 {
-	vector<Group*> dup;
-	for (Group *g : this->groups)
-		dup.push_back(new Group(*g));
-	return dup;
+	return groups;
 }
 
 vector<Shape*> Parser::getModels()
 {
-	vector<Shape*> dup;
-	for (Shape *m : this->allModels)
-		dup.push_back(m);
-	return dup;
+	return allModels;
 }

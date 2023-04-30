@@ -43,6 +43,9 @@ char title[256];
 GLuint vertices;
 int verticeCount;
 
+// color mode variable
+int colorMode;
+
 
 float getShapeColorCode(std::string name, std::string filename)
 {
@@ -83,34 +86,22 @@ void applyTransformations(Group* g)
 
 void drawModels(std::vector<Shape*> models, bool paint)
 {
-	glBegin(GL_TRIANGLES);
-		for (Shape *s : models)
+	for (Shape *s : models)
+	{
+		if (paint)
 		{
-			if (paint)
-			{
-				float code = getShapeColorCode(s->getName(), s->getFile())/255.0f;
-				glColor3f(code, code, code);
-			}
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, vertices);
-			glVertexPointer(3, GL_FLOAT, 0, 0);
-			int start = s->getVBOStartIndex(), count = s->getVBOStopIndex() - start;
-			printf("%d %d\n", start, count);
-			glDrawArrays(GL_TRIANGLES, start, count);
-			glDisableClientState(GL_VERTEX_ARRAY);
-			// std::vector<Point> points = s->getPoints();
-			// for (int i=0 ; i<points.size() ; i+=3)
-			// {
-				// Point p = points.at(i);
-				// glVertex3f(p.getX(), p.getY(), p.getZ());
-				// p = points.at(i+1);
-				// glVertex3f(p.getX(), p.getY(), p.getZ());
-				// p = points.at(i+2);
-				// glVertex3f(p.getX(), p.getY(), p.getZ());
-			// }
+			float code = getShapeColorCode(s->getName(), s->getFile())/255.0f;
+			glColor3f(code, code, code);
 		}
-	glEnd();
+
+		int start = s->getVBOStartIndex(), count = s->getVBOStopIndex() - start;
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, vertices);
+		glVertexPointer(3, GL_FLOAT, 0, 0);
+		glDrawArrays(GL_TRIANGLES, start, count);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
 }
 
 void drawGroups(std::vector<Group*> groups, bool paint)
@@ -383,6 +374,12 @@ void processNormalKeys(unsigned char key, int x, int y) {
 		case 'x':
 			camSpeed /= 2.0f;
 			break;
+		case 'c':
+			colorMode = (colorMode + 1)%2;
+			if (!colorMode)
+				glPolygonMode(GL_FRONT, GL_LINE);
+			else
+				glPolygonMode(GL_FRONT, GL_FILL);
 	}
 	glutPostRedisplay();
 }
@@ -500,14 +497,14 @@ void buildVBO()
 		int nameIdx = findName(&setModels, m->getFile());
 		if (nameIdx == -1)
 		{
-			vboStartIndexes.push_back(points.size());
+			vboStartIndexes.push_back(points.size()/3);
 			for (Point p : m->getPoints())
 			{
 				points.push_back(p.getX());
 				points.push_back(p.getY());
 				points.push_back(p.getZ());
 			}
-			vboStopIndexes.push_back(points.size());
+			vboStopIndexes.push_back(points.size()/3);
 			setModels.push_back(m->getFile());
 			nameIdx = setModels.size()-1;
 		}
@@ -519,12 +516,12 @@ void buildVBO()
 
 	verticeCount = points.size();
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glGenBuffers(1, &vertices);
 
+	glGenBuffers(1, &vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, vertices);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*points.size(), points.data(), GL_STATIC_DRAW);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_ARRAY_BUFFER);
 }
 
 
