@@ -98,7 +98,8 @@ void drawModels(std::vector<Shape*> models, bool paint)
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, vertices);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glDrawArrays(GL_TRIANGLES, start, count);
+		// glDrawArrays(GL_TRIANGLES, start, count);
+		glDrawArrays(GL_POINTS, start, count);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
@@ -376,8 +377,10 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			break;
 		case 'c':
 			colorMode = (colorMode + 1)%2;
-			if (!colorMode)
+			if (colorMode == 0)
 				glPolygonMode(GL_FRONT, GL_LINE);
+			else if (colorMode == 1)
+				glPolygonMode(GL_FRONT, GL_POINT);
 			else
 				glPolygonMode(GL_FRONT, GL_FILL);
 	}

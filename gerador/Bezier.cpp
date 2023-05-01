@@ -6,7 +6,7 @@ int numPatches, numControlPoints;
 vector<vector<int>> indices;
 vector<Point> controlPoints;
 
-int divs = 32;
+int divs = 16;
 
 void readPatchFile(char *filePath)
 {
@@ -84,82 +84,84 @@ void readPatchFile(char *filePath)
 	}
 }
 
-Point getBezierPoint (float t, Point P[4])
+void multMatrices(float *M1, float *M2, float *res)
 {
-	float t2 = t*t, t3 = t2*t;
-	float b0 = -t3 + 3*t2 - 3*t + 1,
-				b1 = 3*t3 -6*t2 + 3*t,
-				b2 = -3*t3 + 3*t2,
-				b3 = t3;
-
-	return P[0]*b0 + P[1]*b1 + P[2]*b2 + P[3]*b3; 
-}
-
-Point getGlobalBezierPoint (float t, int curveIndex)
-{
-	vector<Point> points, aux;
-	points.reserve(16);
-	for (int i : indices.at(curveIndex))
-		points.push_back(controlPoints.at(i));
-
-	while(points.size() > 4)
+	for (int i=0 ; i<4 ; i++)
 	{
-		int auxSize = points.size()-1;
-		aux.reserve(auxSize);
-
-		for (int i=0 ; i<auxSize-3 ; i++)
+		for (int j=0 ; j<4 ; j++)
 		{
-			Point P[4] = 	{ points.at(i), 
-											points.at(i+1),
-											points.at(i+2),
-											points.at(i+3) };
-			aux.emplace_back(getBezierPoint(t, P));
+			res[i*4 + j] = M1[i*4 + j] * M2[j*4 + i];
 		}
-		points = aux;
-		aux = vector<Point>();
 	}
-
-	Point P[4] = 	{ points.at(0), 
-									points.at(1),
-									points.at(2),
-									points.at(3) };
-
-	return getBezierPoint(t, P);
 }
 
-void createModel(char *dot3DFile)
+void multMatrixVector(float *M, float *V, float *res) {
+	for (int j = 0; j < 4; ++j) {
+		res[j] = 0;
+		for (int k = 0; k < 4; ++k) {
+			res[j] += V[k] * M[j * 4 + k];
+		}
+	}
+}
+
+void multPointMatrixVector(Point *M, float *V, Point *res) {
+	for (int j = 0; j < 4; ++j) {
+		res[j] = Point(0,0,0);
+		for (int k = 0; k < 4; ++k) {
+			res[j] = res[j] + M[j * 4 + k] * V[k];
+		}
+	}
+}
+
+void multMatrixPointVector(float *M, Point *V, Point *res) {
+	for (int j = 0; j < 4; ++j) {
+		res[j] = Point(0,0,0);
+		for (int k = 0; k < 4; ++k) {
+			res[j] = res[j] + V[k] * M[j * 4 + k];
+		}
+	}
+}
+
+Point getBezierPatchPoint (float u, float v, Point P[16])
 {
-	vector<vector<Point>> bezierPoints;
-	bezierPoints.reserve(numPatches);
+	float M[16] ={ -1,  3, -3, 1, 
+															 3, -6,  3, 0,
+															-3,  3,  0, 0,
+															 1,  0,  0, 0 };
+	float u2 = u*u, u3 = u2*u, v2 = v*v, v3 = v2*v;
+	float U[4] = {u3, u2, u, 1},
+				V[4] = {v3, v2, v, 1};
+
+	float UxM[4];
+	multMatrixVector(M, U, UxM);
+	Point UxMxP[4];
+	multPointMatrixVector(P, UxM, UxMxP);
+	Point UxMxPxMT[4];
+	multMatrixPointVector(M, UxMxP, UxMxPxMT);;
+	return UxMxPxMT[0]*V[0] + UxMxPxMT[1]*V[1] + UxMxPxMT[2]*V[2] + UxMxPxMT[3]*V[3];
+}
+
+
+
+void createModel(int tesselation, char *dot3DFile)
+{
+	Shape s;
+	float divisions = 1.0f / tesselation, u, v;
 
 	for (int i=0 ; i<numPatches ; i++)
 	{
-		bezierPoints.push_back(vector<Point>());
-		bezierPoints.at(i).reserve(16);
-		float t = 0, inc = 1.0f / 16;
-		for (int j=0 ; j<16 ; j++, t+=inc)
-			bezierPoints.at(i).emplace_back(getGlobalBezierPoint(t, i));
-	}
-	
-	Shape s;
-	for (int i=0 ; i<numPatches-1 ; i++)
-	{
-		for (int j=0 ; j<15 ; j++)
+		for (int j=0 ; j<16 ; j+= 4)
 		{
-			s.addPoint(bezierPoints.at(i).at(j));
-			s.addPoint(bezierPoints.at(i+1).at(j+1));
-			s.addPoint(bezierPoints.at(i).at(j+1));
-			s.addPoint(bezierPoints.at(i+1).at(j));
-			s.addPoint(bezierPoints.at(i+1).at(j+1));
+			
 		}
 	}
 
 	s.writeToFile(dot3DFile);
 }
 
-void geraBezier(char *filePath, char *dot3DFile)
+void geraBezier(char *filePath, int tesselation, char *dot3DFile)
 {
 	readPatchFile(filePath);
-	createModel(dot3DFile);
+	createModel(tesselation, dot3DFile);
 }
 

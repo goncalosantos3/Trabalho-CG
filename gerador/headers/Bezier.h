@@ -11,4 +11,4 @@
 #include "../../common/headers/Point.h"
 #include <sys/stat.h>
 
-void geraBezier(char *filePath, char *dot3DFile);
+void geraBezier(char *filePath, int tesselation, char *dot3DFile);

@@ -326,7 +326,7 @@ int main(int argc, char *argv[]){
 	}else if(strcmp(argv[1], "washer")==0){
 		geraArruela(stof(argv[2]), stof(argv[3]), stof(argv[4]), stoi(argv[5]), argv[6]);
 	}else if(strcmp(argv[1], "bezier")==0){
-		geraBezier(argv[2], argv[3]);
+		geraBezier(argv[2], stoi(argv[3]), argv[4]);
 	}
 	else{
 		printf("Primitiva: %s, não suportada!\n", argv[1]);
