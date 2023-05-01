@@ -15,6 +15,9 @@ public:
 	{ 
 	};
 	
+	Point operator*(const float& num);
+	Point operator+(const Point& num);
+	
 	float getX();
 	float getY();
 	float getZ();

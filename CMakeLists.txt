@@ -70,7 +70,7 @@ PROJECT(generator)
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} common/Shape.cpp gerador/generator.cpp common/Point.cpp )
+add_executable(${PROJECT_NAME} common/Shape.cpp gerador/generator.cpp common/Point.cpp gerador/Bezier.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
