@@ -1,6 +1,6 @@
 #pragma once
 
-enum TransfType { Translate=0, Rotate=1, Scale=2, Color=3 };
+enum TransfType { Translate=0, TimeTranslate=1, Rotate=2, TimeRotate=3, Scale=4, Color=5 };
 
 class Transformation
 {
@@ -8,6 +8,8 @@ class Transformation
 		enum TransfType type;
 		float x, y, z;
 		float angle;
+		bool align;
+		float time;
 
 	public:
 		Transformation(){};

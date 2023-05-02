@@ -84,13 +84,28 @@ void readPatchFile(char *filePath)
 	}
 }
 
-void multMatrices(float *M1, float *M2, float *res)
+void PointMatrix_x_FloatMatrix(Point *M1, float *M2, Point *res)
 {
 	for (int i=0 ; i<4 ; i++)
 	{
 		for (int j=0 ; j<4 ; j++)
 		{
-			res[i*4 + j] = M1[i*4 + j] * M2[j*4 + i];
+			res[i*4 + j] = Point(0,0,0);
+			for (int k = 0 ; k<4 ; k++)
+				res[i*4 + j] = res[i*4 + j] + M1[i*4 + k]*M2[j*4 + k];
+		}
+	}
+}
+
+void FloatMatrix_x_PointMatrix(float *M1, Point *M2, Point *res)
+{
+	for (int i=0 ; i<4 ; i++)
+	{
+		for (int j=0 ; j<4 ; j++)
+		{
+			res[i*4 + j] = Point(0,0,0);
+			for (int k = 0 ; k<4 ; k++)
+				res[i*4 + j] = res[i*4 + j] + M2[j*4 + k]*M1[i*4 + k];
 		}
 	}
 }
@@ -122,22 +137,27 @@ void multMatrixPointVector(float *M, Point *V, Point *res) {
 	}
 }
 
-Point getBezierPatchPoint (float u, float v, Point P[16])
+Point MxPxMT[16];
+
+void calcMxPxMT (Point P[16])
 {
 	float M[16] ={ -1,  3, -3, 1, 
-															 3, -6,  3, 0,
-															-3,  3,  0, 0,
-															 1,  0,  0, 0 };
+								 3, -6,  3, 0,
+								-3,  3,  0, 0,
+								 1,  0,  0, 0 };
+	Point MxP[16];
+	FloatMatrix_x_PointMatrix(M, P, MxP);
+	PointMatrix_x_FloatMatrix(MxP, M, MxPxMT);;
+}
+
+Point getBezierPatchPoint (float u, float v)
+{
 	float u2 = u*u, u3 = u2*u, v2 = v*v, v3 = v2*v;
 	float U[4] = {u3, u2, u, 1},
 				V[4] = {v3, v2, v, 1};
-
-	float UxM[4];
-	multMatrixVector(M, U, UxM);
-	Point UxMxP[4];
-	multPointMatrixVector(P, UxM, UxMxP);
 	Point UxMxPxMT[4];
-	multMatrixPointVector(M, UxMxP, UxMxPxMT);;
+	multPointMatrixVector(MxPxMT, U, UxMxPxMT);
+
 	return UxMxPxMT[0]*V[0] + UxMxPxMT[1]*V[1] + UxMxPxMT[2]*V[2] + UxMxPxMT[3]*V[3];
 }
 
@@ -146,13 +166,23 @@ Point getBezierPatchPoint (float u, float v, Point P[16])
 void createModel(int tesselation, char *dot3DFile)
 {
 	Shape s;
-	float divisions = 1.0f / tesselation, u, v;
+	float inc = 1.0f / tesselation;
 
 	for (int i=0 ; i<numPatches ; i++)
 	{
-		for (int j=0 ; j<16 ; j+= 4)
+		vector<int> patchIndices = indices.at(i);
+		Point P[16];
+		int index;
+		for (int j=0 ; j<16 ; index = patchIndices.at(j), P[j++] = controlPoints.at(index));
+		calcMxPxMT(P);
+		// for (int z = 0 ; z<16 ; printf("%f %f %f\n", MxPxMT[z].getX(), MxPxMT[z].getY(), MxPxMT[z].getZ()), z++);
+		// puts("");
+		float u=0.0f, v;
+		for (int ui=0 ; ui<tesselation ; ui++, u+=inc)
 		{
-			
+			v = 0.0f;
+			for (int vi=0 ; vi<tesselation ; vi++, v+=inc)
+				s.addPoint(getBezierPatchPoint(u, v));
 		}
 	}
 

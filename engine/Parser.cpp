@@ -1,4 +1,6 @@
 #include "headers/Parser.h"
+#include "headers/Transformation.h"
+#include "headers/rapidxml.hpp"
 
 using namespace std;
 using namespace rapidxml;
@@ -95,6 +97,22 @@ int Parser::parseCamera (xml_node<>* cameraNode)
 	}
 
 	return 0;
+}
+
+Transformation* parseTranslation(xml_node<>* transformationNode)
+{
+	TransfType type;
+	xml_attribute<>* timeAttr = transformationNode->first_attribute("time");
+	if (timeAttr)
+	{
+		type = TimeTranslate;
+		float time = strtof(timeAttr->value(), NULL);
+		xml_attribute<>* alignAttr = transformationNode->first_attribute("align");
+		string alignStr = (alignAttr) ?string(alignAttr->value()) :"false";
+		bool align = false;
+		if (alignStr == "true")
+			align = true;
+	}
 }
 
 Transformation* parseTransformation(xml_node<>* transformationNode)
