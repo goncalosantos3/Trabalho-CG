@@ -10,6 +10,8 @@
 #include "Group.h"
 #include "../../common/headers/Shape.h"
 #include "rapidxml.hpp"
+#include "Curve.h"
+#include "Transformation.h"
 
 class Parser
 {

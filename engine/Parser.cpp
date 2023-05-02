@@ -56,7 +56,7 @@ int Parser::parseCamera (xml_node<>* cameraNode)
 			cerr << "Invalid Camera LookAt" << endl;
 			return 2;
 		}
-			
+		
 		this->camera->setLookAt(new Point(strtod(x->value(), NULL), strtod(y->value(), NULL), strtod(z->value(), NULL)));
 	}
 	
@@ -112,7 +112,48 @@ Transformation* parseTranslation(xml_node<>* transformationNode)
 		bool align = false;
 		if (alignStr == "true")
 			align = true;
+		
+		vector<Point> curvePoints;
+
+		for (xml_node<>* point = transformationNode->first_node("point") ; point ; point = point->next_sibling("point"))
+		{
+			xml_attribute<> *x = point->first_attribute("x"), 
+											*y = point->first_attribute("y"), 
+											*z = point->first_attribute("z");
+
+			if (!x || !y || !z)
+			{
+				cerr << "ERROR: Couldn't read point on translation definition!!" << endl;
+				exit(1);
+			}
+			curvePoints.emplace_back(strtof(x->value(), NULL),
+															 strtof(y->value(),NULL),
+															 strtof(z->value(),NULL));
+		}
+
+		if (curvePoints.size() < 4)
+		{
+			cerr << "ERROR: Catmull-Rom curve should have at least 4 points!!" << endl;
+			exit(1);
+		}
+
+		return new Curve(time, align, curvePoints);
 	}
+	float x = strtof(transformationNode->first_attribute("x")->value(), NULL);
+	float y = strtof(transformationNode->first_attribute("y")->value(), NULL);
+	float z = strtof(transformationNode->first_attribute("z")->value(), NULL);
+	return new Transformation(Translate, x, y, z);
+}
+
+Transformation* parseRotation (xml_node<>* transformationNode)
+{
+	float x = strtof(transformationNode->first_attribute("x")->value(), NULL);
+	float y = strtof(transformationNode->first_attribute("y")->value(), NULL);
+	float z = strtof(transformationNode->first_attribute("z")->value(), NULL);
+	xml_attribute<>* time = transformationNode->first_attribute("time");
+	if (time) // caso seja uma rotacao temporal
+		return new Transformation(x,y,z, strtof(time->value(), NULL));
+	return new Transformation(Rotate,x,y,z, strtof(transformationNode->first_attribute("angle")->value(), NULL));
 }
 
 Transformation* parseTransformation(xml_node<>* transformationNode)
@@ -129,20 +170,17 @@ Transformation* parseTransformation(xml_node<>* transformationNode)
 			return new Transformation(type, r, g, b, -1);
 		}
 		int aux = strcmp(transformationNode->name(),"scale");
-		float x = strtof(transformationNode->first_attribute("x")->value(), NULL);
-		float y = strtof(transformationNode->first_attribute("y")->value(), NULL);
-		float z = strtof(transformationNode->first_attribute("z")->value(), NULL);
-		float angle = -1;
 		if (aux == 0)
-			type = Scale;
-		else if (aux < 0)
 		{
-			angle = strtof(transformationNode->first_attribute("angle")->value(), NULL);
-			type = Rotate;
+			type = Scale;
+			float x = strtof(transformationNode->first_attribute("x")->value(), NULL);
+			float y = strtof(transformationNode->first_attribute("y")->value(), NULL);
+			float z = strtof(transformationNode->first_attribute("z")->value(), NULL);
+			return new Transformation(type, x, y, z);
 		}
-		else
-			type = Translate;
-		return new Transformation(type, x, y, z, angle);
+		else if (aux < 0)
+			return parseRotation(transformationNode);
+		return parseTranslation(transformationNode);
 	}
 	return NULL;
 }

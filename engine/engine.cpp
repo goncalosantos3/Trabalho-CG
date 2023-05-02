@@ -1,4 +1,5 @@
 #include "headers/Parser.h"
+#include "headers/Transformation.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -31,6 +32,10 @@ int tracking = 0;
 int startX = 0, startY = 0;
 float sensivity = 0.05f, camSpeed = 5.0f;
 
+// timed transformations variables
+float curveTime = 0;
+int updatesPerSec = 144;
+
 // fps count variables
 int timebase;
 float frames;
@@ -45,6 +50,14 @@ int verticeCount;
 
 // color mode variable
 int colorMode;
+
+void buildRotMatrix(float *x, float *y, float *z, float *m) {
+
+	m[0] = x[0]; m[1] = x[1]; m[2] = x[2]; m[3] = 0;
+	m[4] = y[0]; m[5] = y[1]; m[6] = y[2]; m[7] = 0;
+	m[8] = z[0]; m[9] = z[1]; m[10] = z[2]; m[11] = 0;
+	m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
+}
 
 
 float getShapeColorCode(std::string name, std::string filename)
@@ -70,6 +83,10 @@ void applyTransformations(Group* g)
 		{
 			case Translate:
 				glTranslatef(x,y,z);
+				break;
+			case TimeTranslate:
+				float pos[3], deriv[3];
+				((Curve*)t)->getGlobalCatmullRomPoint(curveTime, pos, deriv);
 				break;
 			case Rotate:
 				glRotatef(angle, x,y,z);
