@@ -139,24 +139,31 @@
 		<!-- Terra -->
 		<group>
 			<transform>
-				<!-- <translate x="615" y="0" z="0"/> -->
 				<translate time="36.5" align="true">
 					<point x="615" y="0" z="0"/>
+					<point x="307.5" y="0" z="307.5"/>
 					<point x="0" y="0" z="615"/>
-					<point x="-675" y="0" z="0"/>
+					<point x="-307.5" y="0" z="307.5"/>
+					<point x="-725" y="0" z="0"/>
+					<point x="-307.5" y="0" z="-307.5"/>
 					<point x="0" y="0" z="-615"/>
+					<point x="307.5" y="0" z="-307.5"/>
 				</translate>
 				<color r="61" g="129" b="224"/> 
 				<scale x="2.6" y="2.6" z="2.6"/>
 			</transform>
-			<models>
-				<model name="Earth" file="sphere.3d" />
-			</models>
+			<group>
+				<transform>
+					<rotate time="1" x="0" y="1" z="0"/>
+				</transform>
+				<models>
+					<model name="Earth" file="sphere.3d" />
+				</models>
+			</group>
 			<!-- Lua -->
 			<group>
 				<transform>
-					<!-- <translate x="2" y="0" z="0"/> -->
-					<translate time="0.1" align="true">
+					<translate time="2.8" align="true">
 						<point x="2" y="0" z="0"/>
 						<point x="0" y="0" z="2"/>
 						<point x="-2" y="0" z="0"/>
