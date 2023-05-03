@@ -7,7 +7,7 @@ PROJECT(engine)
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Group.cpp common/Shape.cpp engine/Parser.cpp common/Point.cpp engine/Transformation.cpp)
+add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Group.cpp common/Shape.cpp engine/Parser.cpp common/Point.cpp engine/Transformation.cpp common/MatrixOpp.cpp engine/Curve.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
@@ -70,7 +70,7 @@ PROJECT(generator)
 set(OpenGL_GL_PREFERENCE LEGACY)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} common/Shape.cpp gerador/generator.cpp common/Point.cpp gerador/Bezier.cpp)
+add_executable(${PROJECT_NAME} common/Shape.cpp gerador/generator.cpp common/Point.cpp gerador/Bezier.cpp common/MatrixOpp.cpp)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})

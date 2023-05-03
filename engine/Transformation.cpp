@@ -24,3 +24,8 @@ float Transformation::getAngle()
 {
 	return this->angle;
 }
+
+float Transformation::getTime()
+{
+	return time;
+}

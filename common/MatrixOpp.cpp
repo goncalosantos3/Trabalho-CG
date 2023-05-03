@@ -25,7 +25,7 @@ void PointMatrix_x_FloatMatrix(Point *M1, float *M2, Point *res)
 		{
 			res[i*4 + j] = Point(0,0,0);
 			for (int k = 0 ; k<4 ; k++)
-				res[i*4 + j] = res[i*4 + j] + M1[i*4 + k]*M2[j*4 + k];
+				res[i*4 + j] = res[i*4 + j] + M1[i*4 + k]*M2[k*4 + j];
 		}
 	}
 }
@@ -38,7 +38,7 @@ void FloatMatrix_x_PointMatrix(float *M1, Point *M2, Point *res)
 		{
 			res[i*4 + j] = Point(0,0,0);
 			for (int k = 0 ; k<4 ; k++)
-				res[i*4 + j] = res[i*4 + j] + M2[j*4 + k]*M1[i*4 + k];
+				res[i*4 + j] = res[i*4 + j] + M2[k*4 + j]*M1[i*4 + k];
 		}
 	}
 }
@@ -48,6 +48,15 @@ void multMatrixVector(float *M, float *V, float *res) {
 		res[j] = 0;
 		for (int k = 0; k < 4; ++k) {
 			res[j] += V[k] * M[j * 4 + k];
+		}
+	}
+}
+
+void multVectorPointMatrix(Point *M, float *V, Point *res) {
+	for (int j = 0; j < 4; ++j) {
+		res[j] = Point(0,0,0);
+		for (int k = 0; k < 4; ++k) {
+			res[j] = res[j] + M[k * 4 + j] * V[k];
 		}
 	}
 }

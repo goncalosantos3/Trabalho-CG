@@ -8,6 +8,9 @@ Group::Group()
 	transformations.reserve(3);
 	models.reserve(5);
 	groups.reserve(5);
+	oldYaxis[0] = 0.0f;
+	oldYaxis[1] = 1.0f;
+	oldYaxis[2] = 0.0f;
 }
 
 Group::Group(const Group& group)
@@ -21,7 +24,9 @@ Group::Group(const Group& group)
 	groups.reserve(group.groups.size());
 	for (auto& g: group.groups)
 		groups.push_back(g);
-	printf("Duplicated Group\n");
+	oldYaxis[0] = 0.0f;
+	oldYaxis[1] = 1.0f;
+	oldYaxis[2] = 0.0f;
 }
 
 Group::~Group()
@@ -68,6 +73,13 @@ void Group::addGroups(std::vector<Group*>& g)
 		this->addGroup(gr);
 }
 
+void Group::setOldYAxis(float *newOldYAxis)
+{
+	oldYaxis[0] = newOldYAxis[0];
+	oldYaxis[1] = newOldYAxis[1];
+	oldYaxis[2] = newOldYAxis[2];
+}
+
 std::vector<Transformation*> Group::getTransformations()
 {
 	return this->transformations;
@@ -81,4 +93,9 @@ std::vector<Shape*> Group::getModels()
 std::vector<Group*> Group::getGroups()
 {
 	return this->groups;
+}
+
+float *Group::getOldYAxis()
+{
+	return oldYaxis;
 }

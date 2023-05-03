@@ -1,5 +1,6 @@
 #include "headers/Parser.h"
 #include "headers/Transformation.h"
+#include "../common/headers/MatrixOpp.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -21,7 +22,7 @@
 // window and model variables
 std::pair<float, float> window;
 Camera* camera;
-float alpha, beta, radius;
+float alpha, betaAngle, radius;
 std::vector<Group*> rootGroups;
 std::vector<Shape*> allModels;
 
@@ -33,7 +34,7 @@ int startX = 0, startY = 0;
 float sensivity = 0.05f, camSpeed = 5.0f;
 
 // timed transformations variables
-float curveTime = 0;
+float transfBaseTime,transfTime = 0;
 int updatesPerSec = 144;
 
 // fps count variables
@@ -51,14 +52,6 @@ int verticeCount;
 // color mode variable
 int colorMode;
 
-void buildRotMatrix(float *x, float *y, float *z, float *m) {
-
-	m[0] = x[0]; m[1] = x[1]; m[2] = x[2]; m[3] = 0;
-	m[4] = y[0]; m[5] = y[1]; m[6] = y[2]; m[7] = 0;
-	m[8] = z[0]; m[9] = z[1]; m[10] = z[2]; m[11] = 0;
-	m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
-}
-
 
 float getShapeColorCode(std::string name, std::string filename)
 {
@@ -69,6 +62,34 @@ float getShapeColorCode(std::string name, std::string filename)
 			return (i+1.0f);
 	}
 	return 0;
+}
+
+void renderCatmullRomCurve(Curve *c) {
+
+	int NUM_SEG = 100;
+	float t = 0.0f, inc = 1.0f/NUM_SEG;
+	float pos[3], deriv[3];
+
+	c->getGlobalCatmullRomPoint(t, pos, deriv);
+// draw curve using line segments with GL_LINE_LOOP 
+
+	float currentColor[4];
+	glGetFloatv(GL_CURRENT_COLOR,currentColor);
+	glColor3f(0.4f, 0.4f, 0.4f);
+	glBegin(GL_LINE_LOOP);
+		for (int i=0 ; i<NUM_SEG ; i++, t+=inc,c->getGlobalCatmullRomPoint(t*c->getTime(), pos, deriv))
+			glVertex3f(pos[0], pos[1], pos[2]);
+	glEnd();
+	glColor3f(currentColor[0], currentColor[1], currentColor[2]);
+
+}
+
+void buildRotMatrix(float *x, float *y, float *z, float *m) {
+
+	m[0] = x[0]; m[1] = x[1]; m[2] = x[2]; m[3] = 0;
+	m[4] = y[0]; m[5] = y[1]; m[6] = y[2]; m[7] = 0;
+	m[8] = z[0]; m[9] = z[1]; m[10] = z[2]; m[11] = 0;
+	m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
 }
 
 void applyTransformations(Group* g)
@@ -84,13 +105,37 @@ void applyTransformations(Group* g)
 			case Translate:
 				glTranslatef(x,y,z);
 				break;
-			case TimeTranslate:
+			case TimeTranslate:{
+				Curve *c = (Curve*)t;
 				float pos[3], deriv[3];
-				((Curve*)t)->getGlobalCatmullRomPoint(curveTime, pos, deriv);
+				c->getGlobalCatmullRomPoint(transfTime, pos, deriv);
+				renderCatmullRomCurve(c);
+				glTranslatef(pos[0], pos[1], pos[2]);
+				if (c->getAlign())
+				{
+					float *xAxis=deriv, yAxis[3],zAxis[3], *y0 = g->getOldYAxis();
+					normalize(xAxis);
+					cross(xAxis, y0, zAxis);
+					normalize(zAxis);
+					cross(zAxis,xAxis,yAxis);
+					normalize(yAxis);
+					g->setOldYAxis(yAxis);
+					float m[16];
+					buildRotMatrix(xAxis, yAxis, zAxis, m);
+					glMultMatrixf(m);
+				}
 				break;
+			}
 			case Rotate:
 				glRotatef(angle, x,y,z);
 				break;
+			case TimeRotate:{
+				float totalRotTime = t->getTime();
+				float baseAngle = (360) / totalRotTime;
+				float rotTime = fmod(transfTime, totalRotTime);
+				glRotatef(rotTime*baseAngle, x, y, z);
+				break;
+			}
 			case Scale:
 				glScalef(x,y,z);
 				break;
@@ -178,8 +223,12 @@ unsigned char  picking(int x, int y) {
 	// voltar a ativar as texturas
 	// glEnable(GL_TEXTURE_2D);
 	// voltar a desenhar so as linhas dos triangulos
-	glPolygonMode(GL_FRONT, GL_LINE);
-	
+	if (!colorMode)
+		glPolygonMode(GL_FRONT, GL_LINE);
+	else
+		glPolygonMode(GL_FRONT, GL_FILL);
+
+
 	return res[0];
 }
 
@@ -274,6 +323,12 @@ void renderScene(void)
 		snprintf(title, 256, "%s %f", initialTitle, fps);
 		glutSetWindowTitle(title);
 	}
+	// printf("inc : %f, %f %f\n", 1.0f/updatesPerSec, timePassed - transfBaseTime, 1000.0f / updatesPerSec);
+	if (timePassed - transfBaseTime >= 1000.0f / updatesPerSec)
+	{
+		transfTime += 1.0f/updatesPerSec;
+		transfBaseTime = timePassed;
+	}
 	glutSwapBuffers();
 }
 
@@ -318,19 +373,19 @@ void processSpecialKeys(int key, int xx, int yy) {
 		alpha += 0.1; break;
 
 	case GLUT_KEY_UP:
-		beta += 0.1f;
-		if (beta > 3.1f)
-			beta = 3.1f;
+		betaAngle += 0.1f;
+		if (betaAngle > 3.1f)
+			betaAngle = 3.1f;
 		break;
 
 	case GLUT_KEY_DOWN:
-		beta -= 0.1f;
-		if (beta < -0.05f)
-			beta = -0.05f;
+		betaAngle -= 0.1f;
+		if (betaAngle < -0.05f)
+			betaAngle = -0.05f;
 		break;
 	}
 	camera->setAlpha(alpha);
-	camera->setBeta(beta);
+	camera->setBeta(betaAngle);
 	camera->updateLookAt();
 	glutPostRedisplay();
 
@@ -343,7 +398,7 @@ void moveCamera(int fb, int lr)
 	{
 		Point* camPos = camera->getPosition();
 		camera->setPosition(new Point(camPos->getX() + fb * camSpeed * sin(alpha),
-																	camPos->getY() - fb * camSpeed * cos(beta),
+																	camPos->getY() - fb * camSpeed * cos(betaAngle),
 																	camPos->getZ() + fb * camSpeed * cos(alpha)));
 		camera->updateLookAt();
 		return;
@@ -404,7 +459,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
 
 void processMouseButtons(int button, int state, int xx, int yy) 
 {
-	int alphaAux, betaAux;
+	int alphaAux, betaAngleAux;
 	if (state == GLUT_DOWN)  {
 		startX = xx;
 		startY = yy;
@@ -430,8 +485,8 @@ void processMouseButtons(int button, int state, int xx, int yy)
 		if (tracking == 1) {
 			alpha += (xx - startX)*sensivity;
 			camera->setAlpha(alpha);
-			beta += (yy - startY)*sensivity;
-			camera->setBeta(beta);
+			betaAngle += (yy - startY)*sensivity;
+			camera->setBeta(betaAngle);
 		}
 		tracking = 0;
 	}
@@ -439,7 +494,7 @@ void processMouseButtons(int button, int state, int xx, int yy)
 
 void processMouseMotion(int xx, int yy)
 {
-	float alphaAux, betaAux;
+	float alphaAux, betaAngleAux;
 	float deltaX, deltaY;
 	int rAux;
 
@@ -452,18 +507,18 @@ void processMouseMotion(int xx, int yy)
 	if (tracking) {
 
 		alphaAux = alpha + deltaX*sensivity;
-		betaAux = beta + deltaY*sensivity;
+		betaAngleAux = betaAngle+ deltaY*sensivity;
 
-		if (betaAux > 3.1f)
-			betaAux = 3.1f;
-		else if (betaAux < 0.05f)
-			betaAux = 0.05f;
+		if (betaAngleAux > 3.1f)
+			betaAngleAux = 3.1f;
+		else if (betaAngleAux < 0.05f)
+			betaAngleAux = 0.05f;
 
 		rAux = radius;
 	}
 	Point* camPos = camera->getPosition();
 	camera->setLookAt(new Point(camPos->getX() + radius*sin(alphaAux),
-															camPos->getY() - radius*cos(betaAux),
+															camPos->getY() - radius*cos(betaAngleAux),
 															camPos->getZ() + radius*cos(alphaAux)));
 	glutPostRedisplay();
 }
@@ -560,10 +615,10 @@ int main(int argc, char **argv)
 
 	camera->calculateAngles();
 	alpha = camera->getAlpha();
-	beta = camera->getBeta();
+	betaAngle = camera->getBeta();
 	radius = camera->getRadius();
 
-	printf("Instructions:\n\tMove with the 'W', 'A', 'S' and 'D' keys\n\tMove the camera with the arrow keys or with the mouse\n\tIncrease/Decrease camera Speed: 'Z'/'X'\n\tSelect a model by pointing and pressing wither middle mouse button or 'P'");
+	printf("Instructions:\n\tMove with the 'W', 'A', 'S' and 'D' keys\n\tMove the camera with the arrow keys or with the mouse\n\tIncrease/Decrease camera Speed: 'Z'/'X'\n\tSelect a model by pointing and pressing wither middle mouse button or 'P'\n");
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -578,6 +633,7 @@ int main(int argc, char **argv)
 
 
 	timebase = glutGet(GLUT_ELAPSED_TIME);
+	transfBaseTime = timebase;
 	initialTitle = argv[1];
 
 	glutSpecialFunc(processSpecialKeys);

@@ -32,8 +32,10 @@ void getCatmullRomPoint(float t, float *p0, float *p1, float *p2, float *p3, flo
 void Curve::getGlobalCatmullRomPoint(float gt, float *pos, float *deriv) {
 	
 	int POINT_COUNT = this->curvePoints.size();
-	float t = gt * POINT_COUNT; // this is the real global t
+	// printf("gt %f\n", gt);
+	float t = (fmod(gt, this->getTime())/this->getTime()) * POINT_COUNT; // this is the real global t
 	int index = floor(t);  // which segment
+	// printf("%f\n", t);
 	t = t - index; // where within  the segment
 
 	// indices store the points
@@ -51,6 +53,5 @@ void Curve::getGlobalCatmullRomPoint(float gt, float *pos, float *deriv) {
 		memcpy(p[i], aux, 3*sizeof(float));
 	}
 
-	float pos1[3], deriv1[3];
-	getCatmullRomPoint(t, p[indices[0]], p[indices[1]], p[indices[2]], p[indices[3]], pos1, deriv1);
+	getCatmullRomPoint(t, p[0], p[1], p[2], p[3], pos, deriv);
 }

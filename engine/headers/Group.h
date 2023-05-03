@@ -11,6 +11,7 @@ class Group
 		std::vector<Transformation*> transformations;
 		std::vector<Shape*> models;
 		std::vector<Group*> groups;
+		float oldYaxis[3];
 
 	public:
 		Group();
@@ -23,8 +24,10 @@ class Group
 		void addModels(std::vector<Shape*>& s);
 		void addGroup(Group* g);
 		void addGroups(std::vector<Group*>& g);
+		void setOldYAxis(float *newOldYAxis);
 
 		std::vector<Transformation*> getTransformations();
 		std::vector<Shape*> getModels();
 		std::vector<Group*> getGroups();
+		float *getOldYAxis();
 };

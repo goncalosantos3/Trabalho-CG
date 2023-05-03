@@ -28,4 +28,5 @@ class Transformation
 		float getY();
 		float getZ();
 		float getAngle();
+		float getTime();
 };

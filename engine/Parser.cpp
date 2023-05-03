@@ -203,7 +203,9 @@ int Parser::parseTransformations(vector<Transformation*>* transformations, xml_n
 			switch (transf->getType())
 			{
 				case Translate: verify = &transl; break;
+				case TimeTranslate: verify = &transl; break;
 				case Rotate: verify = &rot; break;
+				case TimeRotate: verify = &rot; break;
 				case Color: verify = &color; break;
 				default: verify = &scale; break;
 			}
