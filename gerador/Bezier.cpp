@@ -7,8 +7,6 @@ int numPatches, numControlPoints;
 vector<vector<int>> indices;
 vector<Point> controlPoints;
 
-int divs = 16;
-
 void readPatchFile(char *filePath)
 {
 	string path = "../files/";
@@ -34,7 +32,7 @@ void readPatchFile(char *filePath)
 
 	// read indices
 	indices.reserve(numPatches);
-
+// 
 	for (int i=0 ; i<numPatches ; i++)
 	{
 		indices.push_back(vector<int>());
@@ -54,11 +52,11 @@ void readPatchFile(char *filePath)
 			}
 			indices.at(i).push_back(val);
 		}
-		// if (indices.at(i).size() != 16)
-		// {
-			// cerr << "ERROR: Indices for path number " << i+1 << " should have 16 values!!\nParsing Stopped" << endl;
-			// exit(2);
-		// }
+		if (indices.at(i).size() != 16)
+		{
+			cerr << "ERROR: Indices for path number " << i+1 << " should have 16 values!!\nParsing Stopped" << endl;
+			exit(2);
+		}
 		free(str);
 	}
 
@@ -116,54 +114,63 @@ void calcMxPxMT (Point P[16], bool debug)
 	}
 }
 
-Point getBezierPatchPoint (float u, float v)
+Point getBezierPatchPoint (float u, float v, bool debug)
 {
 	float u2 = u*u, u3 = u2*u, v2 = v*v, v3 = v2*v;
 	float U[4] = {u3, u2, u, 1},
 				V[4] = {v3, v2, v, 1};
 	Point UxMxPxMT[4];
 	multVectorPointMatrix(MxPxMT, U, UxMxPxMT);
+	Point result =  UxMxPxMT[0]*V[0] + UxMxPxMT[1]*V[1] + UxMxPxMT[2]*V[2] + UxMxPxMT[3]*V[3];
+	
+	if (debug)
+	{
+		printf("\n%f %f\n", u, v);
+		printf("\n%f %f %f %f\n", UxMxPxMT[0].getX(), UxMxPxMT[1].getX(), UxMxPxMT[2].getX(), UxMxPxMT[3].getX());
+		printf("\n%f\n", result.getX());
+	}
 
-	return UxMxPxMT[0]*V[0] + UxMxPxMT[1]*V[1] + UxMxPxMT[2]*V[2] + UxMxPxMT[3]*V[3];
+	return result;
 }
 
 
 
 void createModel(int tesselation, char *dot3DFile)
 {
+
 	Shape s;
 	float inc = 1.0f / tesselation;
 
 	for (int i=0 ; i<numPatches ; i++)
 	{
-		vector<int> patchIndices = indices.at(i);
+		vector<int> patchIndices = indices[i];
 		Point P[16];
 		int index;
 		for (int j=0 ; j<patchIndices.size() ; index = patchIndices.at(j), P[j++] = controlPoints.at(index));
-		calcMxPxMT(P, i==0);
+		calcMxPxMT(P, false);
 
 		vector<Point> patch;
 		float u=0.0f, v;
-		for (int ui=0 ; ui<tesselation ; ui++, u+=inc)
+		for (int ui=0 ; ui<=tesselation ; ui++, u+=inc)
 		{
 			v = 0.0f;
-			for (int vi=0 ; vi<tesselation ; vi++, v+=inc)
-				patch.push_back(getBezierPatchPoint(u, v));
+			for (int vi=0 ; vi<=tesselation ; vi++, v+=inc)
+				patch.push_back(getBezierPatchPoint(u, v, false));
 		}
 
 		// points per line
 		int ppl = tesselation + 1;
-		for (int ui=0 ; ui<tesselation ; ui++, u+=inc)
+		for (int ui=0 ; ui<tesselation ; ui++)
 		{
-			for (int vi=0 ; vi<tesselation ; vi++, v+=inc)
+			for (int vi=0 ; vi<tesselation ; vi++)
 			{
-				Point p0 = patch[ui     + vi       * ppl],
-							p1 = patch[ui + 1 + vi       * ppl],
-							p2 = patch[ui     + (vi + 1) * ppl],
+				Point p0 = patch[ui	 + vi	   * ppl],
+							p1 = patch[ui + 1 + vi * ppl],
+							p2 = patch[ui	 + (vi + 1) * ppl],
 							p3 = patch[ui + 1 + (vi + 1) * ppl];
 		
-				s.addPoint(p0); s.addPoint(p2); s.addPoint(p1);
-				s.addPoint(p1); s.addPoint(p2); s.addPoint(p3);
+				s.addPoint(p0); s.addPoint(p1); s.addPoint(p2);
+				s.addPoint(p1); s.addPoint(p3); s.addPoint(p2);
 			}
 		}
 	}
@@ -176,4 +183,3 @@ void geraBezier(char *filePath, int tesselation, char *dot3DFile)
 	readPatchFile(filePath);
 	createModel(tesselation, dot3DFile);
 }
-

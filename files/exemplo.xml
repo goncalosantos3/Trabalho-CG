@@ -8,8 +8,8 @@
 	</camera>
 	<group>
 		<models>
-			<model file="example.3d"/>
-			<!-- <model file="teapot.3d"/> -->
+			<!-- <model file="example.3d"/> -->
+			<model file="teapot.3d"/>
 		</models>
 	</group>
 </world>

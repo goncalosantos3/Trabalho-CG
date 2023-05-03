@@ -43,15 +43,15 @@
 		</group>
 
 		<!-- Terra -->
-		<group>
-			<transform>
-				<scale x="615" y="1" z="615"/>
-				<color r="255" g="255" b="255"/>
-			</transform>
-			<models>
-				<model file="washer.3d"/>
-			</models>
-		</group>
+		<!-- <group> -->
+			<!-- <transform> -->
+				<!-- <scale x="615" y="1" z="615"/> -->
+				<!-- <color r="255" g="255" b="255"/> -->
+			<!-- </transform> -->
+			<!-- <models> -->
+				<!-- <model file="washer.3d"/> -->
+			<!-- </models> -->
+		<!-- </group> -->
 
 		<!-- Marte -->
 		<group>
@@ -139,7 +139,13 @@
 		<!-- Terra -->
 		<group>
 			<transform>
-				<translate x="615" y="0" z="0"/>
+				<!-- <translate x="615" y="0" z="0"/> -->
+				<translate time="36.5" align="true">
+					<point x="615" y="0" z="0"/>
+					<point x="0" y="0" z="615"/>
+					<point x="-675" y="0" z="0"/>
+					<point x="0" y="0" z="-615"/>
+				</translate>
 				<color r="61" g="129" b="224"/> 
 				<scale x="2.6" y="2.6" z="2.6"/>
 			</transform>
@@ -149,7 +155,13 @@
 			<!-- Lua -->
 			<group>
 				<transform>
-					<translate x="2" y="0" z="0"/>
+					<!-- <translate x="2" y="0" z="0"/> -->
+					<translate time="0.1" align="true">
+						<point x="2" y="0" z="0"/>
+						<point x="0" y="0" z="2"/>
+						<point x="-2" y="0" z="0"/>
+						<point x="0" y="0" z="-2"/>
+					</translate>
 					<color r="240" g="240" b="240"/>
 					<scale x="0.27" y="0.27" z="0.27"/>
 				</transform>
