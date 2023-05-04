@@ -114,14 +114,24 @@ void calcMxPxMT (Point P[16], bool debug)
 	}
 }
 
-Point getBezierPatchPoint (float u, float v, bool debug)
+Point getBezierPatchPoint (float u, float v, Point *du, Point *dv, bool debug)
 {
 	float u2 = u*u, u3 = u2*u, v2 = v*v, v3 = v2*v;
 	float U[4] = {u3, u2, u, 1},
-				V[4] = {v3, v2, v, 1};
+				V[4] = {v3, v2, v, 1},
+				dU[4] = {3*u2, 2*u, 1, 0},
+				dV[4] = {3*v2, 2*v, 1, 0};
 	Point UxMxPxMT[4];
 	multVectorPointMatrix(MxPxMT, U, UxMxPxMT);
 	Point result =  UxMxPxMT[0]*V[0] + UxMxPxMT[1]*V[1] + UxMxPxMT[2]*V[2] + UxMxPxMT[3]*V[3];
+
+	if (du && dv)
+	{
+		Point dUxMxPxMT[4];
+		multVectorPointMatrix(MxPxMT, dU, dUxMxPxMT);
+		*du = dUxMxPxMT[0]*V[0] + dUxMxPxMT[1]*V[1] + dUxMxPxMT[2]*V[2] + dUxMxPxMT[3]*V[3];
+		*dv = UxMxPxMT[0]*dV[0] + UxMxPxMT[1]*dV[1] + UxMxPxMT[2]*dV[2] + UxMxPxMT[3]*dV[3];
+	}
 	
 	if (debug)
 	{
@@ -132,7 +142,6 @@ Point getBezierPatchPoint (float u, float v, bool debug)
 
 	return result;
 }
-
 
 
 void createModel(int tesselation, char *dot3DFile)
@@ -150,15 +159,26 @@ void createModel(int tesselation, char *dot3DFile)
 		calcMxPxMT(P, false);
 
 		vector<Point> patch;
+		Point du, dv;
 		float u=0.0f, v;
 		for (int ui=0 ; ui<=tesselation ; ui++, u+=inc)
 		{
 			v = 0.0f;
 			for (int vi=0 ; vi<=tesselation ; vi++, v+=inc)
-				patch.push_back(getBezierPatchPoint(u, v, false));
+			{
+				patch.push_back(getBezierPatchPoint(u, v, &du, &dv, false));
+			}
 		}
 
-		// points per line
+		// calculate the normal vector
+		// float du_v[3] = {du.getX(), du.getY(), du.getZ()},
+					// dv_v[3] = {dv.getX(), dv.getY(), dv.getZ()},
+					// normal[3];
+		// normalize(du_v);
+		// normalize(dv_v);
+		// cross(du_v, dv_v, normal);
+		// normalize(normal);
+
 		int ppl = tesselation + 1;
 		for (int ui=0 ; ui<tesselation ; ui++)
 		{
@@ -168,7 +188,7 @@ void createModel(int tesselation, char *dot3DFile)
 							p1 = patch[ui + 1 + vi * ppl],
 							p2 = patch[ui	 + (vi + 1) * ppl],
 							p3 = patch[ui + 1 + (vi + 1) * ppl];
-		
+	
 				s.addPoint(p0); s.addPoint(p1); s.addPoint(p2);
 				s.addPoint(p1); s.addPoint(p3); s.addPoint(p2);
 			}

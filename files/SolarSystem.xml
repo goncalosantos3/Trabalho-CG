@@ -202,7 +202,7 @@
 				</translate>
 				<rotate time="0.075" x="0" y="1" z="0"/>
 				<!-- <translate x="12009" y="0" z="0"/> -->
-				<color r="196" g="169" b="104"/> 
+				<color r="120" g="221" b="248"/> 
 				<scale x="41.6" y="41.6" z="41.6"/>
 			</transform>
 			<models>
@@ -224,7 +224,7 @@
 					<point x="6445.63" y="0" z="-6445.63"/>
 				</translate>
 				<rotate time="0.075" x="0" y="1" z="0"/>
-				<color r="196" g="169" b="104"/> 
+				<color r="17" g="77" b="252"/> 
 				<scale x="40.4" y="40.4" z="40.4"/>
 			</transform>
 			<models>
@@ -235,13 +235,19 @@
 		<!-- Cometa -->
 		<group>
 			<transform>
-				<translate time="100" align="true">
-					<point x="-9115.5" y="100" z="-9115.5"/>
-					<point x="-9115.5" y="0" z="9115.5"/>
-					<point x="9115.5" y="100" z="-9115.5"/>
-					<point x="9115.5" y="100" z="9115.5"/>
+				<translate time="10" align="true">
+					<point x="-650" y="-100" z="0" />
+					<point x="-440" y="-50" z="370" />
+					<point x="0" y="0" z="500" />
+					<point x="500" y="50" z="380" />
+					<point x="760" y="100" z="0" />
+					<point x="520" y="50" z="-370" />
+					<point x="0" y="0" z="-500" />
+					<point x="-430" y="-50" z="-370" />
 				</translate>
-				<scale x="200" y="200" z="200"/>
+				<rotate angle="-90" x = "1" y="0" z = "0" /> 
+				<scale x="3" y="3" z="3"/>
+				<color r="200" g="200" b="200"/>
 			</transform>
 			<models>
 				<model name="Commet" file="teapot.3d"/>
