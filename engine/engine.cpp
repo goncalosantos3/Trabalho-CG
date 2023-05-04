@@ -50,9 +50,7 @@ GLuint vertices;
 int verticeCount;
 
 // color mode variable
-int colorMode;
-int numDiv = 100;
-int curr = 1;
+int polyMode;
 
 
 float getShapeColorCode(std::string name, std::string filename)
@@ -163,22 +161,9 @@ void drawModels(std::vector<Shape*> models, bool paint)
 		glBindBuffer(GL_ARRAY_BUFFER, vertices);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 		glDrawArrays(GL_TRIANGLES, start, count);
-		// glDrawArrays(GL_POINTS, start, count);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisableClientState(GL_VERTEX_ARRAY);
 		vector<Point> pts = s->getPoints();
-		float numPerDiv = ((float)s->getPoints().size()/3) / numDiv;
-		// glColor3f(1.0f,0.0f,0.0f);
-		// printf("%d %f\n", curr, numPerDiv);
-		// for (int i=0 ; i<curr*numPerDiv*3 ; i+=3)
-		// {
-			// Point p0 = pts.at(i), p1 = pts.at(i+1), p2 = pts.at(i+2);
-			// glBegin(GL_TRIANGLES);
-				// glVertex3f(p0.getX(), p0.getY(), p0.getZ());
-				// glVertex3f(p1.getX(), p1.getY(), p1.getZ());
-				// glVertex3f(p2.getX(), p2.getY(), p2.getZ());
-			// glEnd();
-		// }
 	}
 }
 
@@ -238,7 +223,7 @@ unsigned char  picking(int x, int y) {
 	// voltar a ativar as texturas
 	// glEnable(GL_TEXTURE_2D);
 	// voltar a desenhar so as linhas dos triangulos
-	if (!colorMode)
+	if (!polyMode)
 		glPolygonMode(GL_FRONT, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT, GL_FILL);
@@ -463,19 +448,11 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			camSpeed /= 2.0f;
 			break;
 		case 'c':
-			colorMode = (colorMode + 1)%2;
-			if (colorMode == 0)
+			polyMode = (polyMode + 1)%2;
+			if (polyMode == 0)
 				glPolygonMode(GL_FRONT, GL_LINE);
 			else
 				glPolygonMode(GL_FRONT, GL_FILL);
-		case '+':
-			if (curr < numDiv)
-				curr ++;
-			break;
-		case '-':
-			if (curr>0)
-				curr--;
-			break;
 	}
 	glutPostRedisplay();
 }
