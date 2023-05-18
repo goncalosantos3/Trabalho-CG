@@ -27,13 +27,19 @@ void geraPlano(float len, float div, char *file){
 	{
 		for (j=0, x=-ref ; j<div ; j++, x+=ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y, z+ladoQua));
-		    forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x, y, z+ladoQua));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
+			forma->addNormal(Point(0, 1, 0));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
-		    forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addNormal(Point(0, 1, 0));
 		}
 	}
 
@@ -48,37 +54,50 @@ void geraCubo(float len, float div, char *file){
 	float x = -ref, y = -ref, z = -ref;
 	float ladoQua = len/div;
 
+	// face de baixo
 	for (int i=0; i < div; i++,z += ladoQua)
 	{
 		x = -ref;
 		for (int j=0; j<div ; j++,x += ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
-		    forma->addPoint(Point(x, y, z+ladoQua));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, -1, 0));
+			forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
+			forma->addNormal(Point(0, -1, 0));
+			forma->addPoint(Point(x, y, z+ladoQua));
+			forma->addNormal(Point(0, -1, 0));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x+ladoQua, y, z));
-		    forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, -1, 0));
+			forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addNormal(Point(0, -1, 0));
+			forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
+			forma->addNormal(Point(0, -1, 0));
 		}
 	}
 
+	// face de cima
 	x = -ref;
 	y = ref;
 	z = -ref;
-
 	for (int i=0; i<div ; i++,z += ladoQua)
 	{
 		x = -ref;
 		for (int j=0; j<div ; j++, x += ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y, z+ladoQua));
-		    forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x, y, z+ladoQua));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
+			forma->addNormal(Point(0, 1, 0));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
-		    forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
+			forma->addNormal(Point(0, 1, 0));
+			forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addNormal(Point(0, 1, 0));
 		}
 	}
 
@@ -86,18 +105,25 @@ void geraCubo(float len, float div, char *file){
 	y = -ref;
 	z = -ref;
 
+	// face da esquerda
 	for (int i=0; i<div ; i++,z += ladoQua)
 	{
 		y = -ref;
 		for (int j=0; j<div ; j++, y += ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y, z+ladoQua));
-		    forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
+			forma->addNormal(Point(-1, 0, 0));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(-1, 0, 0));
+			forma->addPoint(Point(x, y, z+ladoQua));
+			forma->addNormal(Point(-1, 0, 0));
+			forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
-		    forma->addPoint(Point(x, y+ladoQua, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(-1, 0, 0));
+			forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
+			forma->addNormal(Point(-1, 0, 0));
+			forma->addPoint(Point(x, y+ladoQua, z));
+			forma->addNormal(Point(-1, 0, 0));
 		}
 	}
 
@@ -105,37 +131,51 @@ void geraCubo(float len, float div, char *file){
 	y = -ref;
 	z = -ref;
 
+	// face da direita
 	for (int i=0; i<div ; i++,z += ladoQua)
 	{
 		y = -ref;
 		for (int j=0; j<div ; j++,y += ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
-		    forma->addPoint(Point(x, y, z+ladoQua));
+			forma->addNormal(Point(1, 0, 0));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(1, 0, 0));
+			forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
+			forma->addNormal(Point(1, 0, 0));
+			forma->addPoint(Point(x, y, z+ladoQua));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y+ladoQua, z));
-		    forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(1, 0, 0));
+			forma->addPoint(Point(x, y+ladoQua, z));
+			forma->addNormal(Point(1, 0, 0));
+			forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
+			forma->addNormal(Point(1, 0, 0));
 		}
 	}
 
 	x = -ref;
 	y = -ref;
 	z = -ref;
-
+	
+	// face de trás
 	for (int i=0; i<div ; i++,x += ladoQua)
 	{
 		y = -ref;
 		for (int j=0; j<div ; j++,y += ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x, y+ladoQua, z));
-		    forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 0, -1));
+			forma->addPoint(Point(x, y+ladoQua, z));
+			forma->addNormal(Point(0, 0, -1));
+			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+			forma->addNormal(Point(0, 0, -1));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
-		    forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 0, -1));
+			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+			forma->addNormal(Point(0, 0, -1));
+			forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addNormal(Point(0, 0, -1));
 		}
 	}
 
@@ -143,18 +183,25 @@ void geraCubo(float len, float div, char *file){
 	y = -ref;
 	z = ref;
 
+	// face da frente
 	for (int i=0; i<div ; i++,x += ladoQua)
 	{
 		y = -ref;
 		for (int j=0; j<div ; j++,y += ladoQua)
 		{
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
-		    forma->addPoint(Point(x, y+ladoQua, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 0, 1));
+			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+			forma->addNormal(Point(0, 0, 1));
+			forma->addPoint(Point(x, y+ladoQua, z));
+			forma->addNormal(Point(0, 0, 1));
 
-		    forma->addPoint(Point(x, y, z));
-		    forma->addPoint(Point(x+ladoQua, y, z));
-		    forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+			forma->addPoint(Point(x, y, z));
+			forma->addNormal(Point(0, 0, 1));
+			forma->addPoint(Point(x+ladoQua, y, z));
+			forma->addNormal(Point(0, 0, 1));
+			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
+			forma->addNormal(Point(0, 0, 1));
 		}
 	}
 
