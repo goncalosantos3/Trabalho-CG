@@ -254,16 +254,37 @@ int Parser::parseModel(Shape* model, string filename)
 	}
 
 	string line;
-	while(getline(modelFile, line))
+	if (!getline(modelFile, line))
 	{
+		cerr << "Error reading number of vertices of model!" << endl;
+		return 1;
+	}
+	int numVertices = stof(line);
+	
+	for (int i=0 ; i<numVertices ; i++)
+	{
+		getline(modelFile, line);
 		float x,y,z;
 		if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
 		{
-			cerr << "Error: model line has wrong syntax...\n Make sure the file was generated correctly..";
+			cerr << "Error: model line number " << 2+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
 			return 1;
 		}
 
 		model->addPoint(Point(x,y,z));
+	}
+
+	for (int i=0 ; i<numVertices ; i++)
+	{
+		getline(modelFile, line);
+		float x,y,z;
+		if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
+		{
+			cerr << "Error: model line number " << 2+numVertices+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
+			return 1;
+		}
+
+		model->addNormal(Point(x,y,z));
 	}
 
 	return 0;

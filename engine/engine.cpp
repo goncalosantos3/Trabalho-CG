@@ -163,7 +163,17 @@ void drawModels(std::vector<Shape*> models, bool paint)
 		glDrawArrays(GL_TRIANGLES, start, count);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisableClientState(GL_VERTEX_ARRAY);
-		vector<Point> pts = s->getPoints();
+		vector<Point> pts = s->getPoints(), normals = s->getNormals();
+		glColor3f(1.0f, 0.0f, 1.0f);
+		glBegin(GL_LINES);
+			for (int i=0 ; i<pts.size() ; i++)
+			{
+				Point p = pts[i], p2 = p + normals[i];
+				glVertex3f(p.getX(), p.getY(), p.getZ());
+				glVertex3f(p2.getX(), p2.getY(), p2.getZ());
+			}
+		glEnd();
+		glColor3f(1.0f, 1.0f, 1.0f);
 	}
 }
 

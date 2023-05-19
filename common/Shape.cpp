@@ -17,6 +17,7 @@ void Shape::addNormal(Point p)
 
 std::ostream& operator<<(std::ostream& stream, const Shape& forma)
 {
+	stream << forma.pontos.size() << "\n";
 	for (Point ponto : forma.pontos)
 		stream << ponto.getX() << " " << ponto.getY() << " " << ponto.getZ() << "\n";
 	for (Point ponto : forma.normais)
@@ -38,6 +39,7 @@ void Shape::writeToFile (char *file)
 
 	std::ofstream f(path);
 
+	f << pontos.size() << "\n";
 	for (Point ponto : this->pontos)
 		f << ponto.getX() << "," << ponto.getY() << ", " << ponto.getZ() << "\n";
 	for (Point ponto : this->normais)
@@ -66,6 +68,12 @@ void Shape::setVBOStopIndex(int idx)
 	this->vboStopIndex = idx;
 }
 
+void Shape::normalizeNormals()
+{
+	for (Point& normal : normais)
+		normal.normalize();
+}
+
 std::vector<Point> Shape::getPoints()
 {
 	return std::vector<Point>(pontos);
@@ -73,7 +81,7 @@ std::vector<Point> Shape::getPoints()
 
 std::vector<Point> Shape::getNormals()
 {
-	return std::vector<Point>(pontos);
+	return std::vector<Point>(normais);
 }
 
 std::string Shape::getName()

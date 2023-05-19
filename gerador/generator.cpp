@@ -43,6 +43,7 @@ void geraPlano(float len, float div, char *file){
 		}
 	}
 
+	forma->normalizeNormals();
 	forma->writeToFile(file);
 }
 
@@ -206,6 +207,7 @@ void geraCubo(float len, float div, char *file){
 	}
 
 
+	forma->normalizeNormals();
 	forma->writeToFile(file);
 
 }
@@ -224,21 +226,38 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
 	for(int i = 0; i < slices; i++){
 		// Base
 		forma->addPoint(Point(0,0,0));
+		forma->addNormal(Point(0,-1,0));
 		forma->addPoint(Point(radius * sin(alfainc),0, radius * cos(alfainc)));
+		forma->addNormal(Point(0,-1,0));
 		forma->addPoint(Point(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
+		forma->addNormal(Point(0,-1,0));
 
 		// Lados
 		for(int j = 0; j < stacks; j++){
-		    forma->addPoint(Point((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
-		    forma->addPoint(Point(r * sin(alfainc),altinc,r * cos(alfainc)));
-		    forma->addPoint(Point(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
+			Point p1 = Point((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)),
+						p2 = Point(r * sin(alfainc),altinc,r * cos(alfainc)),
+						p3 = Point(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)),
+						p4 = Point((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)),
+						n1 = (p2-p1) * (p4-p1),
+						n2 = (p3-p2) * (p1-p2),
+						n3 = (p4-p3) * (p2-p3),
+						n4 = (p1-p4) * (p3-p4);
+			forma->addPoint(p1);
+			forma->addNormal(n1);
+			forma->addPoint(p2);
+			forma->addNormal(n2);
+			forma->addPoint(p3);
+			forma->addNormal(n3);
 		    
-		    forma->addPoint(Point((r + raio) * sin(alfainc-alfa),altinc-alt,(r + raio) * cos(alfainc-alfa)));
-		    forma->addPoint(Point((r + raio) * sin(alfainc),altinc-alt,(r + raio) * cos(alfainc)));
-		    forma->addPoint(Point(r * sin(alfainc-alfa),altinc,r * cos(alfainc-alfa)));
+			forma->addPoint(p4);
+			forma->addNormal(n4);
+			forma->addPoint(p1);
+			forma->addNormal(n1);
+			forma->addPoint(p3);
+			forma->addNormal(n3);
 
-		    altinc += alt;
-		    r -= raio;
+			altinc += alt;
+			r -= raio;
 		}
 
 		alfainc += alfa;
@@ -246,6 +265,7 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
 		r = radius - raio;
 	}
 
+	forma->normalizeNormals();
 	forma->writeToFile(file);
 }
 
@@ -261,16 +281,31 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
 	for (int i = 0; i < stacks; i++, beta+=betainc) {
 		alpha = 0;
 		for (int j = 0; j < slices; j++, alpha+=alphainc) {
-		    forma->addPoint(Point(radius * cos(beta) * sin(alpha), radius * sin(beta), radius * cos(beta) * cos(alpha)));
-		    forma->addPoint(Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)));
-		    forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)));
+			Point p1 = Point(radius * cos(beta) * sin(alpha), radius * sin(beta), radius * cos(beta) * cos(alpha)),
+						p2 = Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)),
+						p3 = Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)),
+						p4 = Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc)),
+						n1 = (p2-p1) * (p3-p2),
+						n2 = (p2-p4) * (p1-p2),
+						n3 = (p1-p3) * (p4-p3),
+						n4 = (p3-p4) * (p2-p4);
+			forma->addPoint(p1);
+			forma->addNormal(n1);
+			forma->addPoint(p2);
+			forma->addNormal(n2);
+			forma->addPoint(p3);
+			forma->addNormal(n3);
 
-		    forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc)));
-		    forma->addPoint(Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)));
-		    forma->addPoint(Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)));
+			forma->addPoint(p4);
+			forma->addNormal(n4);
+			forma->addPoint(p3);
+			forma->addNormal(n3);
+			forma->addPoint(p2);
+			forma->addNormal(n2);
 		}
 	}
 
+	forma->normalizeNormals();
 	forma->writeToFile(file);
 }
 
@@ -286,25 +321,46 @@ void geraCilindro(float radius, float height, int sides, char* file)
 	for (i = 0; i < sides; i++) {
 		// top
 		forma->addPoint(Point(0, height*0.5, 0));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+		forma->addNormal(Point(0,1,0));
 
 		//bottom
 		forma->addPoint(Point(0, -height*0.5, 0));
+		forma->addNormal(Point(0,-1,0));
 		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+		forma->addNormal(Point(0,-1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
+		forma->addNormal(Point(0,-1,0));
 
 	// body
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius));
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+		Point p1 = Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius),
+					p2 = Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius),
+					p3 = Point(cos((i + 1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius),
+					p4 = Point(cos((i + 1) * step * M_PI / 180.0)*radius, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius),
+					n1 = (p2-p1) * (p3-p1),
+					n2 = (p4-p2) * (p1-p2),
+					n3 = (p1-p3) * (p4-p3),
+					n4 = (p3-p4) * (p2-p4);
+		forma->addPoint(p1);
+		forma->addNormal(n1);
+		forma->addPoint(p2);
+		forma->addNormal(n2);
+		forma->addPoint(p3);
+		forma->addNormal(n3);
 
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
+		forma->addPoint(p2);
+		forma->addNormal(n2);
+		forma->addPoint(p4);
+		forma->addNormal(n4);
+		forma->addPoint(p3);
+		forma->addNormal(n3);
 	}
 
 
+	forma->normalizeNormals();
 	forma->writeToFile(file);
 }
 
@@ -320,40 +376,81 @@ void geraArruela(float radiusIn, float radiusOut, float height, int sides, char*
 	for (i = 0; i < sides; i++) {
 		// top
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusOut, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
+		forma->addNormal(Point(0,1,0));
 
 		//bottom
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
+		forma->addNormal(Point(0,1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
+		forma->addNormal(Point(0,1,0));
 
 	// body out
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radiusOut, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
+		Point p1 = Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut),
+					p2 = Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut), 
+					p3 = Point(cos((i + 1) * step * M_PI / 180.0)*radiusOut, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut),
+					p4 = Point(cos((i + 1) * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut),
+					n1 = (p2-p1) * (p3-p1),
+					n2 = (p4-p2) * (p1-p2),
+					n3 = (p1-p3) * (p4-p3),
+					n4 = (p3-p4) * (p2-p4);
+		forma->addPoint(p1);
+		forma->addNormal(n1);
+		forma->addPoint(p2);
+		forma->addNormal(n2);
+		forma->addPoint(p3);
+		forma->addNormal(n3);
 
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radiusOut, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
+		forma->addPoint(p2);
+		forma->addNormal(n2);
+		forma->addPoint(p4);
+		forma->addNormal(n4);
+		forma->addPoint(p3);
+		forma->addNormal(n3);
 
+		Point p5 = Point(cos(i * step * M_PI / 180.0)*radiusIn, height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn),
+					p6 = Point(cos(i * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn), 
+					p7 = Point(cos((i + 1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn),
+					p8 = Point(cos((i + 1) * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn),
+					n5 = (p7-p5) * (p6-p5),
+					n6 = (p5-p6) * (p8-p6),
+					n7 = (p8-p7) * (p5-p7),
+					n8 = (p6-p8) * (p7-p8);
 	// body in
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
+		forma->addPoint(p5);
+		forma->addNormal(p5);
+		forma->addPoint(p7);
+		forma->addNormal(p7);
+		forma->addPoint(p6);
+		forma->addNormal(p6);
 
-		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
-		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
+		forma->addPoint(p6);
+		forma->addNormal(p6);
+		forma->addPoint(p7);
+		forma->addNormal(p7);
+		forma->addPoint(p8);
+		forma->addNormal(p8);
 	}
 
 
+	forma->normalizeNormals();
 	forma->writeToFile(file);
 }
 

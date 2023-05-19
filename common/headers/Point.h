@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <math.h>
 
 class Point
 {
@@ -16,7 +17,12 @@ public:
 	};
 	
 	Point operator*(const float& num);
-	Point operator+(const Point& num);
+	Point operator+(const Point& vec); // sum point coordinates
+	Point operator-(const Point& vec); // calculate vector from 2 points
+	Point operator*(const Point& vec); // cross product of vectors
+	
+	void normalize();
+	void normalizeNormals();
 	
 	float getX();
 	float getY();

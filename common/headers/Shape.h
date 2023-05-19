@@ -29,6 +29,7 @@ public:
 	void setFile(std::string file);
 	void setVBOStartIndex(int idx);
 	void setVBOStopIndex(int idx);
+	void normalizeNormals();
 
 	std::vector<Point> getPoints();
 	std::vector<Point> getNormals();
