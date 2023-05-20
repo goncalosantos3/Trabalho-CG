@@ -11,9 +11,11 @@
 #include <GLUT/glut.h>
 #else
 #include <GL/glew.h>
-#include<GL/gl.h>
+#include <GL/gl.h>
 #include <GL/glut.h>
 #endif
+
+#include <IL/il.h>
 
 #include <filesystem>
 #include <iostream>

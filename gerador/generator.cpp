@@ -40,7 +40,7 @@ void geraPlano(float len, float div, char *file){
 			forma->addNormal(Point(0, 1, 0));
 			forma->addPoint(Point(x+ladoQua, y, z));
 			forma->addNormal(Point(0, 1, 0));
-		}
+        }
 	}
 
 	forma->normalizeNormals();

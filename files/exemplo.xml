@@ -4,11 +4,14 @@
 		<position x="3" y="0" z="0" />
 		<lookAt x="0" y="0" z="0" />
 		<up x="0" y="1" z="0" />
-		<projection fov="60" near="0.1" far="100" /> 
+		<projection fov="60" near="10" far="5000" /> 
 	</camera>
 	<group>
+        <transform>
+            <scale x="200" y="200" z="200"/>
+        </transform>
 		<models>
-			<model file="arruela.3d"/>
+			<model file="teapot.3d"/>
 		</models>
 	</group>
 </world>

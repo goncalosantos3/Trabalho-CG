@@ -159,6 +159,7 @@ void createModel(int tesselation, char *dot3DFile)
 		calcMxPxMT(P, false);
 
 		vector<Point> patch;
+        vector<Point> patchNormals;
 		Point du, dv;
 		float u=0.0f, v;
 		for (int ui=0 ; ui<=tesselation ; ui++, u+=inc)
@@ -167,17 +168,12 @@ void createModel(int tesselation, char *dot3DFile)
 			for (int vi=0 ; vi<=tesselation ; vi++, v+=inc)
 			{
 				patch.push_back(getBezierPatchPoint(u, v, &du, &dv, false));
+                du.normalize();
+                dv.normalize();
+                // calculate the normal vector
+                patchNormals.push_back(dv * du);
 			}
 		}
-
-		// calculate the normal vector
-		// float du_v[3] = {du.getX(), du.getY(), du.getZ()},
-					// dv_v[3] = {dv.getX(), dv.getY(), dv.getZ()},
-					// normal[3];
-		// normalize(du_v);
-		// normalize(dv_v);
-		// cross(du_v, dv_v, normal);
-		// normalize(normal);
 
 		int ppl = tesselation + 1;
 		for (int ui=0 ; ui<tesselation ; ui++)
@@ -187,14 +183,21 @@ void createModel(int tesselation, char *dot3DFile)
 				Point p0 = patch[ui	 + vi	   * ppl],
 							p1 = patch[ui + 1 + vi * ppl],
 							p2 = patch[ui	 + (vi + 1) * ppl],
-							p3 = patch[ui + 1 + (vi + 1) * ppl];
+							p3 = patch[ui + 1 + (vi + 1) * ppl],
+                            n0 = patchNormals[ui + vi * ppl],
+                            n1 = patchNormals[ui + 1 + vi * ppl],
+                            n2 = patchNormals[ui + (vi + 1) * ppl],
+                            n3 = patchNormals[ui + 1 + (vi + 1) * ppl];
 	
 				s.addPoint(p0); s.addPoint(p1); s.addPoint(p2);
+				s.addNormal(n0); s.addNormal(n1); s.addNormal(n2);
 				s.addPoint(p1); s.addPoint(p3); s.addPoint(p2);
+				s.addNormal(n1); s.addNormal(n3); s.addNormal(n2);
 			}
 		}
 	}
 
+    s.normalizeNormals();
 	s.writeToFile(dot3DFile);
 }
 
