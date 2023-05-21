@@ -105,28 +105,43 @@ Point* pointOnTheSameLine(Point *p1, Point *p2)
 
 void Camera::calculateAngles()
 {
-	Point* ne = pointOnTheSameLine(position, lookAt);
-	delete lookAt;
-	lookAt = ne;
+    radius = sqrt(powf(position->getX() - lookAt->getX(),2) +
+                  powf(position->getY() - lookAt->getY(),2) +
+                  powf(position->getZ() - lookAt->getZ(),2));
 
-	radius = sqrt(powf(position->getX() - lookAt->getX(),2) +
-				  			powf(position->getY() - lookAt->getY(),2) +
-				  			powf(position->getZ() - lookAt->getZ(),2));
-
-	beta = acosf((position->getY()-lookAt->getY())/radius);
-	alpha = asinf((lookAt->getX()-position->getX())/radius);
-
-	if (position->getY() - radius*cos(beta) - lookAt->getY() > 1.0f)
-		beta -= M_PI;
-	if (position->getX() + radius*sin(alpha) - lookAt->getX() > 1.0f ||
-			position->getZ() + radius*cos(alpha) - lookAt->getZ() > 1.0f)
-		alpha += M_PI;
+    printf("%f %f %f\n", lookAt->getX(), lookAt->getY(), lookAt->getZ());
+    printf("%f %f %f\n", position->getX(), position->getY(), position->getZ());
+    float iterations = 3600,
+          angle = M_PI * 2 / iterations, 
+          closestY = 0.0f,
+          closestXZ = 0.0f,
+          closestDeltaY = abs(position->getY() - radius*cos(closestY) - lookAt->getY()),
+          closestDeltaXZ =abs(position->getX() + radius*sin(closestXZ) - lookAt->getX() + position->getZ() + radius*cos(closestXZ) - lookAt->getZ());
+    for (int i=1 ; i<iterations ; i++)
+    {
+        float aux = angle*i, 
+              auxDeltaY = abs(position->getY() - radius * cos(aux) - lookAt->getY()), 
+              auxDeltaXZ = abs(position->getX() + radius*sin(aux) - lookAt->getX() + position->getZ() +  radius*cos(aux) - lookAt->getZ());
+        if (aux < M_PI && auxDeltaY < closestDeltaY)
+        {
+            closestDeltaY = auxDeltaY;
+            closestY = aux;
+        }
+        if (auxDeltaXZ < closestDeltaXZ)
+        {
+            closestDeltaXZ = auxDeltaXZ;
+            closestXZ = aux;
+        }
+    }
+    alpha = closestXZ;
+    beta = closestY;
+    updateLookAt();
 }
 
 void Camera::updateLookAt()
 {
 	delete lookAt;
 	lookAt = new Point(position->getX() + radius*sin(alpha),
-										 position->getY() - radius*cos(beta),
-										 position->getZ() + radius*cos(alpha));
+                        position->getY() - radius*cos(beta),
+                        position->getZ() + radius*cos(alpha));
 }

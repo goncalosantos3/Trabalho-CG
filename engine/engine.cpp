@@ -165,17 +165,17 @@ void drawModels(std::vector<Shape*> models, bool paint)
 		glDrawArrays(GL_TRIANGLES, start, count);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glDisableClientState(GL_VERTEX_ARRAY);
-		vector<Point> pts = s->getPoints(), normals = s->getNormals();
-		glColor3f(1.0f, 0.0f, 1.0f);
-		glBegin(GL_LINES);
-			for (int i=0 ; i<pts.size() ; i++)
-			{
-				Point p = pts[i], p2 = p + normals[i];
-				glVertex3f(p.getX(), p.getY(), p.getZ());
-				glVertex3f(p2.getX(), p2.getY(), p2.getZ());
-			}
-		glEnd();
-		glColor3f(1.0f, 1.0f, 1.0f);
+		// vector<Point> pts = s->getPoints(), normals = s->getNormals();
+		// glColor3f(1.0f, 0.0f, 1.0f);
+		// glBegin(GL_LINES);
+		// 	for (int i=0 ; i<pts.size() ; i++)
+		// 	{
+		// 		Point p = pts[i], p2 = p + normals[i];
+		// 		glVertex3f(p.getX(), p.getY(), p.getZ());
+		// 		glVertex3f(p2.getX(), p2.getY(), p2.getZ());
+		// 	}
+		// glEnd();
+		// glColor3f(1.0f, 1.0f, 1.0f);
 	}
 }
 
@@ -257,8 +257,9 @@ void renderText() {
 	}
 	else
 		snprintf(str, 40, "Nothing Selected!!");
-	Point* pos = camera->getPosition();
-	snprintf(str2, 128, "Pos: %f %f %f, CamSpeed: %f", pos->getX(), pos->getY(), pos->getZ(), camSpeed);
+	Point* pos = camera->getPosition(),
+         * lookAt = camera->getLookAt();
+	snprintf(str2, 128, "Pos: %f %f %f, CamSpeed: %f, %f %f %f", pos->getX(), pos->getY(), pos->getZ(), camSpeed, lookAt->getX(), lookAt->getY(), lookAt->getZ());
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -386,14 +387,14 @@ void processSpecialKeys(int key, int xx, int yy) {
 
 	case GLUT_KEY_UP:
 		betaAngle += 0.1f;
-		if (betaAngle > 3.1f)
-			betaAngle = 3.1f;
+		if (betaAngle > M_PI)
+			betaAngle = M_PI;
 		break;
 
 	case GLUT_KEY_DOWN:
 		betaAngle -= 0.1f;
-		if (betaAngle < -0.05f)
-			betaAngle = -0.05f;
+		if (betaAngle < -0.0f)
+			betaAngle = -0.0f;
 		break;
 	}
 	camera->setAlpha(alpha);
@@ -521,10 +522,10 @@ void processMouseMotion(int xx, int yy)
 		alphaAux = alpha + deltaX*sensivity;
 		betaAngleAux = betaAngle+ deltaY*sensivity;
 
-		if (betaAngleAux > 3.1f)
-			betaAngleAux = 3.1f;
-		else if (betaAngleAux < 0.05f)
-			betaAngleAux = 0.05f;
+		if (betaAngleAux > M_PI)
+			betaAngleAux = M_PI;
+		else if (betaAngleAux < 0.0f)
+			betaAngleAux = 0.0f;
 
 		rAux = radius;
 	}

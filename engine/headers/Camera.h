@@ -27,9 +27,9 @@ public:
     float getFov();
     float getNear();
     float getFar();
-		float getRadius();
-		float getAlpha();
-		float getBeta();
+    float getRadius();
+    float getAlpha();
+    float getBeta();
 
     void setPosition(Point* position);
     void setLookAt(Point* lookAt);
@@ -37,10 +37,10 @@ public:
     void setFov(float fov);
     void setNear(float near);
     void setFar(float far);
-		void setRadius(float radius);
-		void setAlpha(float alpha);
-		void setBeta(float beta);
+    void setRadius(float radius);
+    void setAlpha(float alpha);
+    void setBeta(float beta);
 
-		void calculateAngles();
-		void updateLookAt();
+    void calculateAngles();
+    void updateLookAt();
 };
