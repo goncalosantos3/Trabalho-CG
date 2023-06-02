@@ -147,7 +147,7 @@ Point getBezierPatchPoint (float u, float v, Point *du, Point *dv, bool debug)
 void createModel(int tesselation, char *dot3DFile)
 {
 
-	Shape s;
+	Shape shape;
 	float inc = 1.0f / tesselation;
 
 	for (int i=0 ; i<numPatches ; i++)
@@ -176,9 +176,11 @@ void createModel(int tesselation, char *dot3DFile)
 		}
 
 		int ppl = tesselation + 1;
-		for (int ui=0 ; ui<tesselation ; ui++)
+        float t = 0.0f;
+		for (int ui=0 ; ui<tesselation ; ui++, t+=inc)
 		{
-			for (int vi=0 ; vi<tesselation ; vi++)
+            float s = 0.0f;
+			for (int vi=0 ; vi<tesselation ; vi++, s+=inc)
 			{
 				Point p0 = patch[ui	 + vi	   * ppl],
 							p1 = patch[ui + 1 + vi * ppl],
@@ -188,17 +190,23 @@ void createModel(int tesselation, char *dot3DFile)
                             n1 = patchNormals[ui + 1 + vi * ppl],
                             n2 = patchNormals[ui + (vi + 1) * ppl],
                             n3 = patchNormals[ui + 1 + (vi + 1) * ppl];
+                Point2D t0 = Point2D(s, t),
+                        t1 = Point2D(s, t+inc),
+                        t2 = Point2D(s+inc, t),
+                        t3 = Point2D(s+inc, t+inc);
 	
-				s.addPoint(p0); s.addPoint(p1); s.addPoint(p2);
-				s.addNormal(n0); s.addNormal(n1); s.addNormal(n2);
-				s.addPoint(p1); s.addPoint(p3); s.addPoint(p2);
-				s.addNormal(n1); s.addNormal(n3); s.addNormal(n2);
+				shape.addPoint(p0); shape.addPoint(p1); shape.addPoint(p2);
+				shape.addNormal(n0); shape.addNormal(n1); shape.addNormal(n2);
+                shape.addTextCoords(t0);shape.addTextCoords(t1);shape.addTextCoords(t2);
+				shape.addPoint(p1); shape.addPoint(p3); shape.addPoint(p2);
+				shape.addNormal(n1); shape.addNormal(n3); shape.addNormal(n2);
+                shape.addTextCoords(t1);shape.addTextCoords(t3);shape.addTextCoords(t2);
 			}
 		}
 	}
 
-    s.normalizeNormals();
-	s.writeToFile(dot3DFile);
+    shape.normalizeNormals();
+	shape.writeToFile(dot3DFile);
 }
 
 void geraBezier(char *filePath, int tesselation, char *dot3DFile)

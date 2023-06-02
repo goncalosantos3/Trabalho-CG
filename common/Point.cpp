@@ -51,3 +51,9 @@ float Point::getZ()
 {
 	return this->z;
 }
+
+float *Point::asFloatArray()
+{
+    static float vec[] = {x,y,z};
+    return vec;
+}

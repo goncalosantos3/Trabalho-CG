@@ -15,6 +15,11 @@ void Shape::addNormal(Point p)
 	this->normais.emplace_back(p.getX(), p.getY(), p.getZ());
 }
 
+void Shape::addTextCoords(Point2D p)
+{
+    this->coordsText.emplace_back(p.getX(), p.getY());
+}
+
 std::ostream& operator<<(std::ostream& stream, const Shape& forma)
 {
 	stream << forma.pontos.size() << "\n";
@@ -22,6 +27,8 @@ std::ostream& operator<<(std::ostream& stream, const Shape& forma)
 		stream << ponto.getX() << " " << ponto.getY() << " " << ponto.getZ() << "\n";
 	for (Point ponto : forma.normais)
 		stream << ponto.getX() << " " << ponto.getY() << " " << ponto.getZ() << "\n";
+    for (Point2D ponto : forma.coordsText)
+        stream << ponto.getX() << " " << ponto.getY() << "\n";
 	return stream;
 }
 
@@ -44,6 +51,8 @@ void Shape::writeToFile (char *file)
 		f << ponto.getX() << "," << ponto.getY() << ", " << ponto.getZ() << "\n";
 	for (Point ponto : this->normais)
 		f << ponto.getX() << "," << ponto.getY() << ", " << ponto.getZ() << "\n";
+    for (Point2D ponto : this->coordsText)
+        f << ponto.getX() << " " << ponto.getY() << "\n";
 
 	f.close();
 }
@@ -82,6 +91,11 @@ std::vector<Point> Shape::getPoints()
 std::vector<Point> Shape::getNormals()
 {
 	return std::vector<Point>(normais);
+}
+
+std::vector<Point2D> Shape::getTextCoords()
+{
+    return std::vector<Point2D>(coordsText);
 }
 
 std::string Shape::getName()
