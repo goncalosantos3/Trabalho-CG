@@ -16,7 +16,7 @@ void Color::apply()
             amb[] = {ambient.getX(), ambient.getY(), ambient.getZ(), 1.0f},
             spec[] = {specular.getX(), specular.getY(), specular.getZ(), 1.0f},
             emis[] = {emissive.getX(), emissive.getY(), emissive.getZ(), 1.0f};
-
+    
     glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
     glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
     glMaterialfv(GL_FRONT, GL_SPECULAR, spec);

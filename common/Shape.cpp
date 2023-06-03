@@ -73,6 +73,12 @@ void Shape::normalizeNormals()
 		normal.normalize();
 }
 
+void Shape::multiplyNormals(float num)
+{
+    for (int i=0 ; i<normais.size() ; i++)
+        normais[i] = normais[i]*num;
+}
+
 std::vector<Point> Shape::getPoints()
 {
 	return std::vector<Point>(pontos);

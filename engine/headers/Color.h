@@ -19,7 +19,7 @@ class Color
         int shininess;
 
     public:
-        Color(): diffuse(200,200,200), ambient(50,50,50), specular(0,0,0), emissive(0,0,0), shininess(0.0f){};
+        Color(): diffuse(200.0f/255.0f,200.0f/255.0f,200.0f/255.0f), ambient(50.0f/255.0f,50.0f/255.0f,50.0f/255.0f), specular(0,0,0), emissive(0,0,0), shininess(0.0f){};
         Color(Point d, Point a, Point s, Point e, float sh): diffuse(d), ambient(a), specular(s), emissive(e), shininess((sh<0) ?0 :(sh>128) ?128 :sh) {};
         Color(Color& color): diffuse(color.diffuse), ambient(color.ambient), specular(color.specular), emissive(color.emissive), shininess(color.shininess) {};
 

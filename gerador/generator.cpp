@@ -394,6 +394,55 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
 	forma->writeToFile(file);
 }
 
+
+void geraEsferaDentro(float radius, int slices, int stacks, char *file) {
+	Shape* forma = new Shape();
+
+
+	float alphainc = 2 * M_PI / slices;
+	float alpha=0;
+	float betainc = M_PI / stacks;
+	float beta=-M_PI_2;
+    float tInc = 1.0f/stacks, sInc = 1.0f/slices; // incremento de t em cada camada da textura, incremento de s para cada fatia
+
+	for (int i = 0; i < stacks; i++, beta+=betainc) {
+		alpha = 0;
+		for (int j = 0; j < slices; j++, alpha+=alphainc) {
+			Point p1 = Point(radius * cos(beta) * sin(alpha), radius * sin(beta), radius * cos(beta) * cos(alpha)),
+						p2 = Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)),
+						p3 = Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)),
+						p4 = Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc));
+            Point2D t1 = Point2D((j+0)*sInc, (i+0)*tInc),
+                    t2 = Point2D((j+1)*sInc, (i+0)*tInc),
+                    t3 = Point2D((j+0)*sInc, (i+1)*tInc),
+                    t4 = Point2D((j+1)*sInc, (i+1)*tInc);
+
+			forma->addPoint(p1);
+			forma->addNormal(p1*-1);
+            forma->addTextCoords(t1);
+			forma->addPoint(p3);
+			forma->addNormal(p3*-1);
+            forma->addTextCoords(t3);
+			forma->addPoint(p2);
+			forma->addNormal(p2*-1);
+            forma->addTextCoords(t2);
+
+			forma->addPoint(p4);
+			forma->addNormal(p4*-1);
+            forma->addTextCoords(t4);
+			forma->addPoint(p2);
+			forma->addNormal(p2*-1);
+            forma->addTextCoords(t2);
+			forma->addPoint(p3);
+			forma->addNormal(p3*-1);
+            forma->addTextCoords(t3);
+		}
+	}
+
+	forma->normalizeNormals();
+	forma->writeToFile(file);
+}
+
 void geraCilindro(float radius, float height, int sides, char* file) 
 {
 	int i;
@@ -407,18 +456,24 @@ void geraCilindro(float radius, float height, int sides, char* file)
 		// top
 		forma->addPoint(Point(0, height*0.5, 0));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0.4375, 0.1875));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0.4375 + 0.1875*cos((i+0)*step*M_PI/180.0), 0.1875+ 0.1875*sin((i+0)*step*M_PI/180.0)));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radius, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0.4375 + 0.1875*cos((i+1)*step*M_PI/180.0), 0.1875+ 0.1875*sin((i+1)*step*M_PI/180.0)));
 
 		//bottom
 		forma->addPoint(Point(0, -height*0.5, 0));
 		forma->addNormal(Point(0,-1,0));
+        forma->addTextCoords(Point2D(0.8125, 0.1875));
 		forma->addPoint(Point(cos((i + 1) * step * M_PI / 180.0)*radius, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radius));
 		forma->addNormal(Point(0,-1,0));
+        forma->addTextCoords(Point2D(0.8125 + 0.1875*cos((i+1)*step*M_PI/180.0), 0.1875+ 0.1875*sin((i+1)*step*M_PI/180.0)));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radius, -height*0.5, -sin(i * step *M_PI / 180.0)*radius));
 		forma->addNormal(Point(0,-1,0));
+        forma->addTextCoords(Point2D(0.8125 + 0.1875*cos((i+0)*step*M_PI/180.0), 0.1875+ 0.1875*sin((i+0)*step*M_PI/180.0)));
 
 	// body
 		Point p1 = Point(cos(i * step * M_PI / 180.0)*radius, height*0.5, -sin(i * step *M_PI / 180.0)*radius),
@@ -429,19 +484,30 @@ void geraCilindro(float radius, float height, int sides, char* file)
 					n2 = (p4-p2) * (p1-p2),
 					n3 = (p1-p3) * (p4-p3),
 					n4 = (p3-p4) * (p2-p4);
+        Point2D t1 = Point2D(float(i)/float(sides), 1),
+                t2 = Point2D(float(i)/float(sides), 0.375),
+                t3 = Point2D(float(i+1)/float(sides), 1),
+                t4 = Point2D(float(i+1)/float(sides), 0.375);
+                
 		forma->addPoint(p1);
 		forma->addNormal(n1);
+        forma->addTextCoords(t1);
 		forma->addPoint(p2);
 		forma->addNormal(n2);
+        forma->addTextCoords(t2);
 		forma->addPoint(p3);
 		forma->addNormal(n3);
+        forma->addTextCoords(t3);
 
 		forma->addPoint(p2);
 		forma->addNormal(n2);
+        forma->addTextCoords(t2);
 		forma->addPoint(p4);
 		forma->addNormal(n4);
+        forma->addTextCoords(t4);
 		forma->addPoint(p3);
 		forma->addNormal(n3);
+        forma->addTextCoords(t3);
 	}
 
 
@@ -462,30 +528,42 @@ void geraArruela(float radiusIn, float radiusOut, float height, int sides, char*
 		// top
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0,1));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0,1));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(1,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusOut, height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(1,1));
 
 		//bottom
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0,1));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(1,1));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusIn));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(0,0));
 		forma->addPoint(Point(cos((i+1) * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin((i + 1) * step *M_PI / 180.0)*radiusOut));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(1,0));
 		forma->addPoint(Point(cos(i * step * M_PI / 180.0)*radiusOut, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut));
 		forma->addNormal(Point(0,1,0));
+        forma->addTextCoords(Point2D(1,1));
 
 	// body out
 		Point p1 = Point(cos(i * step * M_PI / 180.0)*radiusOut, height*0.5, -sin(i * step *M_PI / 180.0)*radiusOut),
@@ -496,19 +574,29 @@ void geraArruela(float radiusIn, float radiusOut, float height, int sides, char*
 					n2 = (p4-p2) * (p1-p2),
 					n3 = (p1-p3) * (p4-p3),
 					n4 = (p3-p4) * (p2-p4);
+        Point2D t1 = Point2D(0, 0),
+                t2 = Point2D(1, 0),
+                t3 = Point2D(0, 1),
+                t4 = Point2D(1, 1);
 		forma->addPoint(p1);
 		forma->addNormal(n1);
+        forma->addTextCoords(t1);
 		forma->addPoint(p2);
 		forma->addNormal(n2);
+        forma->addTextCoords(t2);
 		forma->addPoint(p3);
 		forma->addNormal(n3);
+        forma->addTextCoords(t3);
 
 		forma->addPoint(p2);
 		forma->addNormal(n2);
+        forma->addTextCoords(t2);
 		forma->addPoint(p4);
 		forma->addNormal(n4);
+        forma->addTextCoords(t4);
 		forma->addPoint(p3);
 		forma->addNormal(n3);
+        forma->addTextCoords(t3);
 
 		Point p5 = Point(cos(i * step * M_PI / 180.0)*radiusIn, height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn),
 					p6 = Point(cos(i * step * M_PI / 180.0)*radiusIn, -height*0.5, -sin(i * step *M_PI / 180.0)*radiusIn), 
@@ -518,24 +606,37 @@ void geraArruela(float radiusIn, float radiusOut, float height, int sides, char*
 					n6 = (p5-p6) * (p8-p6),
 					n7 = (p8-p7) * (p5-p7),
 					n8 = (p6-p8) * (p7-p8);
+
+        Point2D t5 = Point2D(0, 1),
+                t6 = Point2D(1, 1),
+                t7 = Point2D(0, 0),
+                t8 = Point2D(1, 0);
 	// body in
 		forma->addPoint(p5);
 		forma->addNormal(p5);
+        forma->addTextCoords(t5);
 		forma->addPoint(p7);
 		forma->addNormal(p7);
+        forma->addTextCoords(t7);
 		forma->addPoint(p6);
 		forma->addNormal(p6);
+        forma->addTextCoords(t6);
 
 		forma->addPoint(p6);
 		forma->addNormal(p6);
+        forma->addTextCoords(t6);
+
 		forma->addPoint(p7);
 		forma->addNormal(p7);
+        forma->addTextCoords(t7);
 		forma->addPoint(p8);
 		forma->addNormal(p8);
+        forma->addTextCoords(t8);
 	}
 
 
 	forma->normalizeNormals();
+            int inverseNormals;
 	forma->writeToFile(file);
 }
 
@@ -549,7 +650,9 @@ int main(int argc, char *argv[]){
 	}else if(strcmp(argv[1],"cone") == 0){
 		geraCone(stof(argv[2]),stof(argv[3]),stoi(argv[4]),stoi(argv[5]),argv[6]);
 	}else if(strcmp(argv[1],"sphere") == 0){
-		geraEsfera(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
+        geraEsfera(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
+	}else if(strcmp(argv[1],"sphereInv") == 0){
+        geraEsferaDentro(stof(argv[2]), stoi(argv[3]), stoi(argv[4]), argv[5]);
 	}else if(strcmp(argv[1], "cylinder")==0){
 		geraCilindro(stof(argv[2]), stof(argv[3]), stoi(argv[4]), argv[5]);
 	}else if(strcmp(argv[1], "washer")==0){

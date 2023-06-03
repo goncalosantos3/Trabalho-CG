@@ -88,6 +88,7 @@ void Group::generateVBOs()
 
 void renderCatmullRomCurve(Curve *c) 
 {
+    glDisable(GL_LIGHTING);
 	int NUM_SEG = 100;
 	float t = 0.0f, inc = 1.0f/NUM_SEG;
 	float pos[3], deriv[3];
@@ -103,6 +104,7 @@ void renderCatmullRomCurve(Curve *c)
 			glVertex3f(pos[0], pos[1], pos[2]);
 	glEnd();
 	glColor3f(currentColor[0], currentColor[1], currentColor[2]);
+    glEnable(GL_LIGHTING);
 }
 
 
@@ -114,7 +116,7 @@ void buildRotMatrix(float *x, float *y, float *z, float *m)
 	m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
 }
 
-void Group::applyTransformations(float transfTime)
+void Group::applyTransformations(float transfTime, bool color)
 {
 	for (Transformation *t : transformations)
 	{
@@ -131,7 +133,8 @@ void Group::applyTransformations(float transfTime)
 				Curve *c = (Curve*)t;
 				float pos[3], deriv[3];
 				c->getGlobalCatmullRomPoint(transfTime, pos, deriv);
-				renderCatmullRomCurve(c);
+                if (color)
+				    renderCatmullRomCurve(c);
 				glTranslatef(pos[0], pos[1], pos[2]);
 				if (c->getAlign())
 				{
@@ -162,16 +165,29 @@ void Group::applyTransformations(float transfTime)
 				glScalef(x,y,z);
 				break;
 			case Color:
-				glColor3f(x,y,z);
+                if (color)
+                    glColor3f(x,y,z);
 				break;
 		}
 	}
 }
 
+void Group::drawPicking(float transfTime, vector<Shape*> codes)
+{
+    glPushMatrix();
+        applyTransformations(transfTime, false);
+        for (Model* model : models)
+            model->drawPicking(codes);
+        for (Group* group : groups)
+            group->drawPicking(transfTime, codes);
+    glPopMatrix();
+
+}
+
 void Group::draw(float transfTime)
 {
     glPushMatrix();
-        applyTransformations(transfTime);
+        applyTransformations(transfTime, true);
         for (Model* model : models)
             model->draw();
         for (Group* group : groups)

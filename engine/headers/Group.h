@@ -34,9 +34,10 @@ class Group
 		void addGroups(std::vector<Group*>& g);
 		void setOldYAxis(float *newOldYAxis);
 
-        void applyTransformations(float transfTime);
+        void applyTransformations(float transfTime, bool color);
 
         void generateVBOs();
+        void drawPicking(float transfTime, vector<Shape*> codes);
         void draw(float transfTime);
 
 		std::vector<Transformation*> getTransformations();

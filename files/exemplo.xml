@@ -11,11 +11,17 @@
     </lights>
 	<group>
         <transform>
-            <!-- <scale x="200" y="200" z="200"/> -->
+            <scale x="20" y="20" z="20"/>
         </transform>
         <models> 
-            <model file="sphere_1_8_8.3d" > <!-- generator 2 3 box_2_3.3d -->
-                <texture file = "earth.jpg" />
+            <model file="sphereInv.3d" > <!-- generator 2 3 box_2_3.3d -->
+                <color>
+                    <diffuse R="254" G="221" B="0" />
+                    <ambient R="0" G="0" B="0" />
+                    <specular R="0" G="0" B="0" />
+                    <emissive R="0" G="0" B="0" />
+                    <shininess value="0" />
+                </color>
             </model>
         </models>
 	</group>

@@ -36,6 +36,7 @@ class Model
         }
 
         void generateVBOs();
+        void drawPicking(vector<Shape*> codes);
         void draw();
 
         Shape *getShape();

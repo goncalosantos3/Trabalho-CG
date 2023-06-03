@@ -2,6 +2,7 @@
 #include "headers/Transformation.h"
 #include "../common/headers/MatrixOpp.h"
 #include <GL/freeglut_std.h>
+#include<stdlib.h>
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -57,16 +58,6 @@ int verticeCount;
 int polyMode;
 
 
-float getShapeColorCode(std::string name, std::string filename)
-{
-	for (int i=0 ; i<allShapes.size() ; i++)
-	{
-		Shape* model = allShapes.at(i);
-		if (model->getName() == name && model->getFile() == filename)
-			return (i+1.0f);
-	}
-	return 0;
-}
 
 unsigned char  picking(int x, int y) {
 
@@ -98,7 +89,7 @@ unsigned char  picking(int x, int y) {
 	glColor3f(0.0f, 0.0f, 0.0f);
 
     for (Group *g : rootGroups)
-        g->draw(transfTime);
+        g->drawPicking(transfTime, allShapes);
 
 	GLint viewport[4];
 	unsigned char res[4];
@@ -114,11 +105,11 @@ unsigned char  picking(int x, int y) {
 	glEnable(GL_TEXTURE_2D);
 	// voltar a desenhar so as linhas dos triangulos
 	if (!polyMode)
-		glPolygonMode(GL_FRONT, GL_LINE);
-	else
 		glPolygonMode(GL_FRONT, GL_FILL);
+	else
+		glPolygonMode(GL_FRONT, GL_LINE);
 
-
+    printf("%d %d %d\n", res[0], res[1], res[2]);
 	return res[0];
 }
 

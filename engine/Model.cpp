@@ -8,6 +8,34 @@ void Model::generateVBOs()
         vboManager->addModel(shape);
 }
 
+
+float getShapeColorCode(std::vector<Shape*> allShapes, std::string name, std::string filename)
+{
+	for (int i=0 ; i<allShapes.size() ; i++)
+	{
+		Shape* model = allShapes.at(i);
+		if (model->getName() == name && model->getFile() == filename)
+			return (i+1.0f);
+	}
+	return 0;
+}
+
+void Model::drawPicking(vector<Shape*> codes)
+{
+    string shapeFile = shape->getFile();
+    float color = getShapeColorCode(codes, shape->getName(), shape->getFile())/255.0f;
+
+    printf("%f\n", color);
+
+    glColor3f(color, 0.0f, 0.0f);
+    // bind dos pontos
+    glBindBuffer(GL_ARRAY_BUFFER, vboManager->getPointsVBOID(shapeFile));
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, shape->getPoints().size());
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void Model::draw()
 {
     string shapeFile = shape->getFile();
@@ -28,10 +56,14 @@ void Model::draw()
     if (textureFile != "")
     {
         int texID = textureLoader->getTextureID(textureFile);
+        // float white[4] = { 1,1,1,1 },
+        //       black[4] = { 0,0,0,1 };
+        // glMaterialfv(GL_FRONT, GL_DIFFUSE, white);
+        // glMaterialfv(GL_FRONT, GL_AMBIENT, black);
         glBindTexture(GL_TEXTURE_2D, texID);
     }
-    else
-        color.apply();
+
+    color.apply();
 
     // desenhar os triangulos
     glDrawArrays(GL_TRIANGLES, 0, shape->getPoints().size());

@@ -28,6 +28,7 @@ public:
 	void setName(std::string name);
 	void setFile(std::string file);
 	void normalizeNormals();
+    void multiplyNormals(float num);
 
 	std::vector<Point> getPoints();
 	std::vector<Point> getNormals();
