@@ -1,5 +1,10 @@
 #include "headers/Point.h"
 
+Point Point::operator/(const float& num)
+{
+    return Point(x/num, y/num, z/num);
+}
+
 Point Point::operator*(const float& num)
 {
 	return Point(x*num, y*num, z*num);
@@ -54,6 +59,6 @@ float Point::getZ()
 
 float *Point::asFloatArray()
 {
-    static float vec[] = {x,y,z};
+    static float vec[] = {x,y,z,1};
     return vec;
 }

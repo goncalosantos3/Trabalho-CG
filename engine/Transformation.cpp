@@ -1,5 +1,6 @@
 #include "headers/Transformation.h"
 
+
 TransfType Transformation::getType()
 {
 	return this->type;

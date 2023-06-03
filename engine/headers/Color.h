@@ -23,5 +23,11 @@ class Color
         Color(Point d, Point a, Point s, Point e, float sh): diffuse(d), ambient(a), specular(s), emissive(e), shininess((sh<0) ?0 :(sh>128) ?128 :sh) {};
         Color(Color& color): diffuse(color.diffuse), ambient(color.ambient), specular(color.specular), emissive(color.emissive), shininess(color.shininess) {};
 
-        void applyColor();
+        void apply();
+        
+        void setDiffuse(Point diffuse);
+        void setAmbient(Point ambient);
+        void setSpecular(Point specular);
+        void setEmissive(Point emissive);
+        void setShininess(float shininess);
 };

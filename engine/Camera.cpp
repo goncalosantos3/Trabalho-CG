@@ -109,20 +109,19 @@ void Camera::calculateAngles()
                   powf(position->getY() - lookAt->getY(),2) +
                   powf(position->getZ() - lookAt->getZ(),2));
 
-    printf("%f %f %f\n", lookAt->getX(), lookAt->getY(), lookAt->getZ());
-    printf("%f %f %f\n", position->getX(), position->getY(), position->getZ());
-    float iterations = 3600,
+    float x = position->getX(), y = position->getY(), z = position->getZ();
+    float iterations = 360,
           angle = M_PI * 2 / iterations, 
           closestY = 0.0f,
           closestXZ = 0.0f,
-          closestDeltaY = abs(position->getY() - radius*cos(closestY) - lookAt->getY()),
-          closestDeltaXZ =abs(position->getX() + radius*sin(closestXZ) - lookAt->getX() + position->getZ() + radius*cos(closestXZ) - lookAt->getZ());
+          closestDeltaY = abs(y - radius*cos(closestY) - lookAt->getY()),
+          closestDeltaXZ =abs(x + radius*sin(closestXZ) - lookAt->getX() + z + radius*cos(closestXZ) - lookAt->getZ());
     for (int i=1 ; i<iterations ; i++)
     {
         float aux = angle*i, 
-              auxDeltaY = abs(position->getY() - radius * cos(aux) - lookAt->getY()), 
-              auxDeltaXZ = abs(position->getX() + radius*sin(aux) - lookAt->getX() + position->getZ() +  radius*cos(aux) - lookAt->getZ());
-        if (aux < M_PI && auxDeltaY < closestDeltaY)
+              auxDeltaY = abs(y - radius * cos(aux) - lookAt->getY()), 
+              auxDeltaXZ = abs(x + radius*sin(aux) - lookAt->getX() + z +  radius*cos(aux) - lookAt->getZ());
+        if (aux > -M_PI && aux < M_PI && auxDeltaY < closestDeltaY)
         {
             closestDeltaY = auxDeltaY;
             closestY = aux;

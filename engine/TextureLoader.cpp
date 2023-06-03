@@ -1,5 +1,15 @@
 #include "headers/TextureLoader.h"
 
+
+void TextureLoader::init()
+{
+    #ifndef __APPLE__
+        // init GLEW
+	    glewInit();
+    #endif
+    glEnable(GL_TEXTURE_2D);
+}
+
 TextureLoader::~TextureLoader()
 {
     textureIDs.~map<string,GLuint>();
@@ -7,6 +17,9 @@ TextureLoader::~TextureLoader()
 
 void TextureLoader::addTexture(string textureFile)
 {
+    if (textureIDs.count(textureFile) != 0)
+        return;
+
 	unsigned int t,tw,th;
 	unsigned char *texData;
 	unsigned int texID;
@@ -24,11 +37,11 @@ void TextureLoader::addTexture(string textureFile)
 
 	glGenTextures(1,&texID);
 	
-	glBindTexture(GL_TEXTURE_2D,texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
 	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_WRAP_S,		GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_WRAP_T,		GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_MAG_FILTER,   	GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);

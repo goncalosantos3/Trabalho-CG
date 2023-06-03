@@ -17,6 +17,7 @@ public:
 	};
 	
 	Point operator*(const float& num);
+	Point operator/(const float& num);
 	Point operator+(const Point& vec); // sum point coordinates
 	Point operator-(const Point& vec); // calculate vector from 2 points
 	Point operator*(const Point& vec); // cross product of vectors

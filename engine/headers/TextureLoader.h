@@ -18,10 +18,11 @@ class TextureLoader
     private:
         map<string, GLuint> textureIDs;
         const string textureFolder;
+        void init();
 
     public:
-        TextureLoader(): textureFolder("../files/"), textureIDs(){};
-        TextureLoader(TextureLoader& tl): textureFolder(tl.textureFolder), textureIDs(tl.textureIDs){};
+        TextureLoader(): textureFolder("../files/"), textureIDs(){init();};
+        TextureLoader(TextureLoader& tl): textureFolder(tl.textureFolder), textureIDs(tl.textureIDs){init();};
         ~TextureLoader();
 
         void addTexture(string textureFile);

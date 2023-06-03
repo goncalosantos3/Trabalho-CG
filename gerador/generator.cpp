@@ -32,23 +32,29 @@ void geraPlano(float len, float div, char *file){
 		{
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(textS, textT));
+            // forma->addTextCoords(Point2D(textS, textT));
+            forma->addTextCoords(Point2D(1, 1));
 			forma->addPoint(Point(x, y, z+ladoQua));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(textS, textT+textInc));
+            // forma->addTextCoords(Point2D(textS, textT+textInc));
+            forma->addTextCoords(Point2D(1, 0));
 			forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(textS+textInc, textT+textInc));
+            // forma->addTextCoords(Point2D(textS+textInc, textT+textInc));
+            forma->addTextCoords(Point2D(0, 0));
 
 			forma->addPoint(Point(x, y, z));
-            forma->addTextCoords(Point2D(textS, textT));
 			forma->addNormal(Point(0, 1, 0));
+            // forma->addTextCoords(Point2D(textS, textT));
+            forma->addTextCoords(Point2D(1, 1));
 			forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(textS+textInc, textT+textInc));
+            // forma->addTextCoords(Point2D(textS+textInc, textT+textInc));
+            forma->addTextCoords(Point2D(0, 0));
 			forma->addPoint(Point(x+ladoQua, y, z));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(textS+textInc, textT));
+            // forma->addTextCoords(Point2D(textS+textInc, textT));
+            forma->addTextCoords(Point2D(0, 1));
         }
 	}
 
@@ -65,32 +71,32 @@ void geraCubo(float len, float div, char *file){
     float s, t, textInc = 1.0f/div;
 
 	// face de baixo
-    t = 1.0f;
-	for (int i=0; i < div; i++,z += ladoQua, t-=textInc)
+    s = 0.0f;
+	for (int i=0; i < div; i++,z += ladoQua, s+=textInc)
 	{
 		x = -ref;
-        s = 0.0f;
-		for (int j=0; j<div ; j++,x += ladoQua, s+=textInc)
+        t = 0.0f;
+		for (int j=0; j<div ; j++,x += ladoQua, t+=textInc)
 		{
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, -1, 0));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
 			forma->addNormal(Point(0, -1, 0));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addPoint(Point(x, y, z+ladoQua));
 			forma->addNormal(Point(0, -1, 0));
-            forma->addTextCoords(Point2D(x,t+textInc));
+            forma->addTextCoords(Point2D(s,t+textInc));
 
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, -1, 0));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x+ladoQua, y, z));
 			forma->addNormal(Point(0, -1, 0));
-            forma->addTextCoords(Point2D(x+textInc,t));
+            forma->addTextCoords(Point2D(s+textInc,t));
 			forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
 			forma->addNormal(Point(0, -1, 0));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 		}
 	}
 
@@ -98,30 +104,32 @@ void geraCubo(float len, float div, char *file){
 	x = -ref;
 	y = ref;
 	z = -ref;
-	for (int i=0; i<div ; i++,z += ladoQua)
+    s = 0.0f;
+	for (int i=0; i<div ; i++,z += ladoQua, s+=textInc)
 	{
 		x = -ref;
-		for (int j=0; j<div ; j++, x += ladoQua)
+        t = 0.0f;
+		for (int j=0; j<div ; j++, x += ladoQua, t+=textInc)
 		{
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x, y, z+ladoQua));
-            forma->addTextCoords(Point2D(x,t+textInc));
+            forma->addTextCoords(Point2D(s,t+textInc));
 			forma->addNormal(Point(0, 1, 0));
 			forma->addPoint(Point(x+ladoQua, y, z+ladoQua));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addNormal(Point(0, 1, 0));
 
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x + ladoQua, y, z + ladoQua));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addPoint(Point(x+ladoQua, y, z));
 			forma->addNormal(Point(0, 1, 0));
-            forma->addTextCoords(Point2D(x+textInc,t));
+            forma->addTextCoords(Point2D(s+textInc,t));
 		}
 	}
 
@@ -129,31 +137,33 @@ void geraCubo(float len, float div, char *file){
 	y = -ref;
 	z = -ref;
 
+    s = 0.0f;
 	// face da esquerda
-	for (int i=0; i<div ; i++,z += ladoQua)
+	for (int i=0; i<div ; i++,z += ladoQua, s+=textInc)
 	{
 		y = -ref;
-		for (int j=0; j<div ; j++, y += ladoQua)
+        t = 0.0f;
+		for (int j=0; j<div ; j++, y += ladoQua, t+=textInc)
 		{
 			forma->addNormal(Point(-1, 0, 0));
 			forma->addPoint(Point(x, y, z));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addNormal(Point(-1, 0, 0));
 			forma->addPoint(Point(x, y, z+ladoQua));
-            forma->addTextCoords(Point2D(x+textInc,t));
+            forma->addTextCoords(Point2D(s+textInc,t));
 			forma->addNormal(Point(-1, 0, 0));
 			forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(-1, 0, 0));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
 			forma->addNormal(Point(-1, 0, 0));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addPoint(Point(x, y+ladoQua, z));
 			forma->addNormal(Point(-1, 0, 0));
-            forma->addTextCoords(Point2D(x,t+textInc));
+            forma->addTextCoords(Point2D(s,t+textInc));
 		}
 	}
 
@@ -161,95 +171,101 @@ void geraCubo(float len, float div, char *file){
 	y = -ref;
 	z = -ref;
 
+    s = 0.0f;
 	// face da direita
-	for (int i=0; i<div ; i++,z += ladoQua)
+	for (int i=0; i<div ; i++,z += ladoQua, s+=textInc)
 	{
 		y = -ref;
-		for (int j=0; j<div ; j++,y += ladoQua)
+        t = 0.0f;
+		for (int j=0; j<div ; j++,y += ladoQua, t+=textInc)
 		{
 			forma->addNormal(Point(1, 0, 0));
 			forma->addPoint(Point(x, y, z));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addNormal(Point(1, 0, 0));
 			forma->addPoint(Point(x, y+ladoQua, z+ladoQua));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addNormal(Point(1, 0, 0));
 			forma->addPoint(Point(x, y, z+ladoQua));
-            forma->addTextCoords(Point2D(x+textInc,t));
+            forma->addTextCoords(Point2D(s+textInc,t));
 
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(1, 0, 0));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x, y+ladoQua, z));
 			forma->addNormal(Point(1, 0, 0));
-            forma->addTextCoords(Point2D(x,t+textInc));
+            forma->addTextCoords(Point2D(s,t+textInc));
 			forma->addPoint(Point(x, y+ladoQua, z + ladoQua));
 			forma->addNormal(Point(1, 0, 0));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 		}
 	}
 
 	x = -ref;
 	y = -ref;
 	z = -ref;
+    s = 0.0f;
 	
 	// face de trás
-	for (int i=0; i<div ; i++,x += ladoQua)
+	for (int i=0; i<div ; i++,x += ladoQua, s+=textInc)
 	{
 		y = -ref;
-		for (int j=0; j<div ; j++,y += ladoQua)
+        t = 0.0f;
+		for (int j=0; j<div ; j++,y += ladoQua, t+=textInc)
 		{
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 0, -1));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x, y+ladoQua, z));
 			forma->addNormal(Point(0, 0, -1));
-            forma->addTextCoords(Point2D(x,t+textInc));
+            forma->addTextCoords(Point2D(s,t+textInc));
 			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
 			forma->addNormal(Point(0, 0, -1));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 0, -1));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
 			forma->addNormal(Point(0, 0, -1));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addPoint(Point(x+ladoQua, y, z));
 			forma->addNormal(Point(0, 0, -1));
-            forma->addTextCoords(Point2D(x+textInc,t));
+            forma->addTextCoords(Point2D(s+textInc,t));
 		}
 	}
 
 	x = -ref;
 	y = -ref;
 	z = ref;
+    s = 0.0f;
 
 	// face da frente
-	for (int i=0; i<div ; i++,x += ladoQua)
+	for (int i=0; i<div ; i++,x += ladoQua, s+=textInc)
 	{
 		y = -ref;
-		for (int j=0; j<div ; j++,y += ladoQua)
+        t = 0.0f;
+		for (int j=0; j<div ; j++,y += ladoQua, t+=textInc)
 		{
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 0, 1));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
 			forma->addNormal(Point(0, 0, 1));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 			forma->addPoint(Point(x, y+ladoQua, z));
 			forma->addNormal(Point(0, 0, 1));
-            forma->addTextCoords(Point2D(x,t+textInc));
+            forma->addTextCoords(Point2D(s,t+textInc));
 
 			forma->addPoint(Point(x, y, z));
 			forma->addNormal(Point(0, 0, 1));
-            forma->addTextCoords(Point2D(x,t));
+            forma->addTextCoords(Point2D(s,t));
 			forma->addPoint(Point(x+ladoQua, y, z));
 			forma->addNormal(Point(0, 0, 1));
-            forma->addTextCoords(Point2D(x+textInc,t));
+            forma->addTextCoords(Point2D(s+textInc,t));
 			forma->addPoint(Point(x+ladoQua, y+ladoQua, z));
 			forma->addNormal(Point(0, 0, 1));
-            forma->addTextCoords(Point2D(x+textInc,t+textInc));
+            forma->addTextCoords(Point2D(s+textInc,t+textInc));
 		}
 	}
 
@@ -346,33 +362,30 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
 			Point p1 = Point(radius * cos(beta) * sin(alpha), radius * sin(beta), radius * cos(beta) * cos(alpha)),
 						p2 = Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)),
 						p3 = Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)),
-						p4 = Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc)),
-						n1 = (p2-p1) * (p3-p2),
-						n2 = (p2-p4) * (p1-p2),
-						n3 = (p1-p3) * (p4-p3),
-						n4 = (p3-p4) * (p2-p4);
-            Point2D t1 = Point2D(i*sInc, j*tInc),
-                    t2 = Point2D((i+1)*sInc, j*tInc),
-                    t3 = Point2D(i*sInc, (j+1)*tInc),
-                    t4 = Point2D((i+1)*sInc, (j+1)*tInc);
+						p4 = Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc));
+            Point2D t1 = Point2D((j+0)*sInc, (i+0)*tInc),
+                    t2 = Point2D((j+1)*sInc, (i+0)*tInc),
+                    t3 = Point2D((j+0)*sInc, (i+1)*tInc),
+                    t4 = Point2D((j+1)*sInc, (i+1)*tInc);
+
 			forma->addPoint(p1);
-			forma->addNormal(n1);
+			forma->addNormal(p1);
             forma->addTextCoords(t1);
 			forma->addPoint(p2);
-			forma->addNormal(n2);
+			forma->addNormal(p2);
             forma->addTextCoords(t2);
 			forma->addPoint(p3);
-			forma->addNormal(n3);
+			forma->addNormal(p3);
             forma->addTextCoords(t3);
 
 			forma->addPoint(p4);
-			forma->addNormal(n4);
+			forma->addNormal(p4);
             forma->addTextCoords(t4);
 			forma->addPoint(p3);
-			forma->addNormal(n3);
+			forma->addNormal(p3);
             forma->addTextCoords(t3);
 			forma->addPoint(p2);
-			forma->addNormal(n2);
+			forma->addNormal(p2);
             forma->addTextCoords(t2);
 		}
 	}

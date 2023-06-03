@@ -1,6 +1,7 @@
 #include "headers/Parser.h"
 #include "headers/Transformation.h"
 #include "../common/headers/MatrixOpp.h"
+#include <GL/freeglut_std.h>
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -26,7 +27,8 @@ std::pair<float, float> window;
 Camera* camera;
 float alpha, betaAngle, radius;
 std::vector<Group*> rootGroups;
-std::vector<Shape*> allModels;
+std::vector<Shape*> allShapes;
+std::vector<Light*> lights;
 
 // mouse and camera variables
 unsigned int picked = -1;
@@ -57,138 +59,13 @@ int polyMode;
 
 float getShapeColorCode(std::string name, std::string filename)
 {
-	for (int i=0 ; i<allModels.size() ; i++)
+	for (int i=0 ; i<allShapes.size() ; i++)
 	{
-		Shape* model = allModels.at(i);
+		Shape* model = allShapes.at(i);
 		if (model->getName() == name && model->getFile() == filename)
 			return (i+1.0f);
 	}
 	return 0;
-}
-
-void renderCatmullRomCurve(Curve *c) {
-
-	int NUM_SEG = 100;
-	float t = 0.0f, inc = 1.0f/NUM_SEG;
-	float pos[3], deriv[3];
-
-	c->getGlobalCatmullRomPoint(t, pos, deriv);
-// draw curve using line segments with GL_LINE_LOOP 
-
-	float currentColor[4];
-	glGetFloatv(GL_CURRENT_COLOR,currentColor);
-	glColor3f(0.4f, 0.4f, 0.4f);
-	glBegin(GL_LINE_LOOP);
-		for (int i=0 ; i<NUM_SEG ; i++, t+=inc,c->getGlobalCatmullRomPoint(t*c->getTime(), pos, deriv))
-			glVertex3f(pos[0], pos[1], pos[2]);
-	glEnd();
-	glColor3f(currentColor[0], currentColor[1], currentColor[2]);
-
-}
-
-void buildRotMatrix(float *x, float *y, float *z, float *m) {
-
-	m[0] = x[0]; m[1] = x[1]; m[2] = x[2]; m[3] = 0;
-	m[4] = y[0]; m[5] = y[1]; m[6] = y[2]; m[7] = 0;
-	m[8] = z[0]; m[9] = z[1]; m[10] = z[2]; m[11] = 0;
-	m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
-}
-
-void applyTransformations(Group* g)
-{
-	for (Transformation *t : g->getTransformations())
-	{
-		float x = t->getX(),
-					y = t->getY(),
-					z = t->getZ(),
-					angle = t->getAngle();
-		switch(t->getType())
-		{
-			case Translate:
-				glTranslatef(x,y,z);
-				break;
-			case TimeTranslate:{
-				Curve *c = (Curve*)t;
-				float pos[3], deriv[3];
-				c->getGlobalCatmullRomPoint(transfTime, pos, deriv);
-				renderCatmullRomCurve(c);
-				glTranslatef(pos[0], pos[1], pos[2]);
-				if (c->getAlign())
-				{
-					float *xAxis=deriv, yAxis[3],zAxis[3], *y0 = g->getOldYAxis();
-					normalize(xAxis);
-					cross(xAxis, y0, zAxis);
-					normalize(zAxis);
-					cross(zAxis,xAxis,yAxis);
-					normalize(yAxis);
-					g->setOldYAxis(yAxis);
-					float m[16];
-					buildRotMatrix(xAxis, yAxis, zAxis, m);
-					glMultMatrixf(m);
-				}
-				break;
-			}
-			case Rotate:
-				glRotatef(angle, x,y,z);
-				break;
-			case TimeRotate:{
-				float totalRotTime = t->getTime();
-				float baseAngle = (360) / totalRotTime;
-				float rotTime = fmod(transfTime, totalRotTime);
-				glRotatef(rotTime*baseAngle, x, y, z);
-				break;
-			}
-			case Scale:
-				glScalef(x,y,z);
-				break;
-			case Color:
-				glColor3f(x,y,z);
-				break;
-		}
-	}
-}
-
-void drawModels(std::vector<Shape*> models, bool paint)
-{
-	for (Shape *s : models)
-	{
-		if (paint)
-		{
-			float code = getShapeColorCode(s->getName(), s->getFile())/255.0f;
-			glColor3f(code, code, code);
-		}
-
-		int start = s->getVBOStartIndex(), count = s->getVBOStopIndex() - start;
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, vertices);
-		glVertexPointer(3, GL_FLOAT, 0, 0);
-		glDrawArrays(GL_TRIANGLES, start, count);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		// vector<Point> pts = s->getPoints(), normals = s->getNormals();
-		// glColor3f(1.0f, 0.0f, 1.0f);
-		// glBegin(GL_LINES);
-		// 	for (int i=0 ; i<pts.size() ; i++)
-		// 	{
-		// 		Point p = pts[i], p2 = p + normals[i];
-		// 		glVertex3f(p.getX(), p.getY(), p.getZ());
-		// 		glVertex3f(p2.getX(), p2.getY(), p2.getZ());
-		// 	}
-		// glEnd();
-		// glColor3f(1.0f, 1.0f, 1.0f);
-	}
-}
-
-void drawGroups(std::vector<Group*> groups, bool paint)
-{
-	for (Group *g : groups)
-	{
-		glPushMatrix();
-		applyTransformations(g);
-		drawModels(g->getModels(), paint);
-		drawGroups(g->getGroups(), paint);
-		glPopMatrix();
-	}
 }
 
 unsigned char  picking(int x, int y) {
@@ -220,7 +97,8 @@ unsigned char  picking(int x, int y) {
 	// definir cor a preto para desenhar tudo a preto
 	glColor3f(0.0f, 0.0f, 0.0f);
 
-	drawGroups(rootGroups, true);
+    for (Group *g : rootGroups)
+        g->draw(transfTime);
 
 	GLint viewport[4];
 	unsigned char res[4];
@@ -231,9 +109,9 @@ unsigned char  picking(int x, int y) {
 	// redefenir a funcao de profundidade
 	glDepthFunc(GL_LESS);
 	// voltar a ativar a iluminacao
-	// glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHTING);
 	// voltar a ativar as texturas
-	// glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 	// voltar a desenhar so as linhas dos triangulos
 	if (!polyMode)
 		glPolygonMode(GL_FRONT, GL_LINE);
@@ -246,14 +124,15 @@ unsigned char  picking(int x, int y) {
 
 void renderText() {
 
+    glDisable(GL_LIGHTING);
 	char str[40], str2[128];
 	if (picked+1 != 0)
 	{
-		Shape *model = allModels.at(picked);
+		Shape *model = allShapes.at(picked);
 		if (model->getName() != "")
-			snprintf(str, 40, "Picked %s!!", allModels.at(picked)->getName().c_str());
+			snprintf(str, 40, "Picked %s!!", allShapes.at(picked)->getName().c_str());
 		else
-			snprintf(str, 40, "Picked %s!!", allModels.at(picked)->getFile().c_str());
+			snprintf(str, 40, "Picked %s!!", allShapes.at(picked)->getFile().c_str());
 	}
 	else
 		snprintf(str, 40, "Nothing Selected!!");
@@ -291,6 +170,7 @@ void renderText() {
 	glPopMatrix();
 
 	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 }
 
 void renderScene(void)
@@ -306,23 +186,38 @@ void renderScene(void)
 			  lookAt->getX(), lookAt->getY(), lookAt->getZ(),
 			  up->getX(), up->getY(), up->getZ());
 
+    glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 		// X axis in red
+        // float red[4] = {1.0f, 0.0f, 0.0f};
+        // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, red);
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glVertex3f(-1000000.0f, 0.0f, 0.0f);
 		glVertex3f(1000000.0f, 0.0f, 0.0f);
 		// Y Axis in Green
+        // float green[4] = {0.0f, 1.0f, 0.0f};
+        // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, green);
 		glColor3f(0.0f, 1.0f, 0.0f);
 		glVertex3f(0.0f, -1000000.0f, 0.0f);
 		glVertex3f(0.0f, 1000000.0f, 0.0f);
 		// Z Axis in Blue
+        // float blue[4] = {0.0f, 0.0f, 1.0f};
+        // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blue);
 		glColor3f(0.0f, 0.0f, 1.0f);
 		glVertex3f(0.0f, 0.0f, -1000000.0f);
 		glVertex3f(0.0f, 0.0f, 1000000.0f);
 	glEnd();
-
 	glColor3f(1.0f, 1.0f, 1.0f);
-	drawGroups(rootGroups, false);
+    glEnable(GL_LIGHTING);
+
+
+    for (Light *l : lights)
+        l->apply();
+
+    glPushMatrix();
+        for (Group *g : rootGroups)
+            g->draw(transfTime);
+    glPopMatrix();
 
 	renderText();
 
@@ -433,7 +328,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
 			picked = picking(x,y) - 1;
 			if (picked+1)
 			{
-				Shape* shape = allModels.at(picked);
+				Shape* shape = allShapes.at(picked);
 				if (shape->getName() != "")
 					std::cout << "Selected Model with name \"" << shape->getName() << "\"!" << std::endl;
 				else
@@ -463,9 +358,9 @@ void processNormalKeys(unsigned char key, int x, int y) {
 		case 'c':
 			polyMode = (polyMode + 1)%2;
 			if (polyMode == 0)
-				glPolygonMode(GL_FRONT, GL_LINE);
-			else
 				glPolygonMode(GL_FRONT, GL_FILL);
+			else
+				glPolygonMode(GL_FRONT, GL_LINE);
 	}
 	glutPostRedisplay();
 }
@@ -483,7 +378,7 @@ void processMouseButtons(int button, int state, int xx, int yy)
 			picked = picking(xx,yy) - 1;
 			if (picked+1)
 			{
-				Shape* shape = allModels.at(picked);
+				Shape* shape = allShapes.at(picked);
 				if (shape->getName() != "")
 					std::cout << "Selected Model with name \"" << shape->getName() << "\"!" << std::endl;
 				else
@@ -541,104 +436,17 @@ void idle(void)
 	glutPostRedisplay();
 }
 
-int findName (std::vector<std::string>* vec, std::string name)
-{
-	for (int i=0 ; i<vec->size() ; i++)
-		if (vec->at(i) == name)
-			return i;
-	return -1;
-}
-
-void setVBOindexes(std::vector<Group*> groups, 
-									 std::vector<std::string>* models,
-									 std::vector<int>* vboStartIndexes, 
-									 std::vector<int>* vboStopIndexes)
-{
-	for (Group* group : groups)
-	{
-		for (Shape* model : group->getModels())
-		{
-			int fileIdx = findName(models, model->getFile()); 
-			model->setVBOStartIndex(vboStartIndexes->at(fileIdx));
-			model->setVBOStopIndex(vboStopIndexes->at(fileIdx));
-			// printf("%s %d %d %d\n", model->getFile().c_str(), fileIdx, model->getVBOStartIndex(), model->getVBOStopIndex());
-		}
-		setVBOindexes(group->getGroups(), models, vboStartIndexes, vboStopIndexes);
-	}
-}
-
-void buildVBO()
-{
-	std::vector<std::string> setModels;
-	setModels.reserve(allModels.size());
-	std::vector<int> vboStartIndexes, vboStopIndexes;
-	vboStartIndexes.reserve(allModels.size());
-	vboStopIndexes.reserve(allModels.size());
-	
-	std::vector<float> points;
-	points.reserve(100000);
-
-	for (Shape* m : allModels)
-	{
-		int nameIdx = findName(&setModels, m->getFile());
-		if (nameIdx == -1)
-		{
-			vboStartIndexes.push_back(points.size()/3);
-			for (Point p : m->getPoints())
-			{
-				points.push_back(p.getX());
-				points.push_back(p.getY());
-				points.push_back(p.getZ());
-			}
-			vboStopIndexes.push_back(points.size()/3);
-			setModels.push_back(m->getFile());
-			nameIdx = setModels.size()-1;
-		}
-		m->setVBOStartIndex(vboStartIndexes.at(nameIdx));
-		m->setVBOStopIndex(vboStopIndexes.at(nameIdx));
-	}
-
-	setVBOindexes(rootGroups, &setModels, &vboStartIndexes, &vboStopIndexes);
-
-	verticeCount = points.size();
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	glGenBuffers(1, &vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*points.size(), points.data(), GL_STATIC_DRAW);
-
-	glDisableClientState(GL_ARRAY_BUFFER);
-}
-
-
 int main(int argc, char **argv)
 {
 	if (argc < 2)
 	   return 1;
-
-	Parser parser;
-
-	if (parser.parseXML(argv[1]))
-		return 1;
-	
-	window = parser.getWindow();
-	camera = parser.getCamera();
-	rootGroups = parser.getGroups();
-	allModels = parser.getModels();
-
-	camera->calculateAngles();
-	alpha = camera->getAlpha();
-	betaAngle = camera->getBeta();
-	radius = camera->getRadius();
-
-	printf("Instructions:\n\tMove with the 'W', 'A', 'S' and 'D' keys\n\tMove the camera with the arrow keys or with the mouse\n\tIncrease/Decrease camera Speed: 'Z'/'X'\n\tSelect a model by pointing and pressing wither middle mouse button or 'P'\n");
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(window.first, window.second);
 	glutCreateWindow(argv[1]);
-	glPolygonMode(GL_FRONT, GL_LINE);
+	glPolygonMode(GL_FRONT, GL_FILL);
 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
@@ -654,11 +462,29 @@ int main(int argc, char **argv)
 	glutMouseFunc(processMouseButtons);
 	glutMotionFunc(processMouseMotion);
 
-	#ifndef __APPLE__
-	glewInit();
-	#endif
+	Parser parser;
 
-	buildVBO();
+	if (parser.parseXML(argv[1]))
+		return 1;
+	
+	window = parser.getWindow();
+	camera = parser.getCamera();
+	rootGroups = parser.getGroups();
+	allShapes = parser.getShapes();
+    lights = parser.getLights();
+
+	camera->calculateAngles();
+	alpha = camera->getAlpha();
+	betaAngle = camera->getBeta();
+	radius = camera->getRadius();
+
+	printf("Instructions:\n\tMove with the 'W', 'A', 'S' and 'D' keys\n\tMove the camera with the arrow keys or with the mouse\n\tIncrease/Decrease camera Speed: 'Z'/'X'\n\tSelect a model by pointing and pressing wither middle mouse button or 'P'\n");
+
+
+	// #ifndef __APPLE__
+	// glewInit();
+	// #endif
+
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);

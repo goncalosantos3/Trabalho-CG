@@ -43,7 +43,7 @@ include_directories(${OpenGL_INCLUDE_DIRS})
 link_directories(${OpenGL_LIBRARY_DIRS})
 add_definitions(${OpenGL_DEFINITIONS})
 
-add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Group.cpp common/Shape.cpp engine/Parser.cpp common/Point.cpp engine/Transformation.cpp common/MatrixOpp.cpp engine/Curve.cpp)
+add_executable(${PROJECT_NAME} engine/Camera.cpp engine/engine.cpp engine/Group.cpp common/Shape.cpp engine/Parser.cpp common/Point.cpp engine/Transformation.cpp common/MatrixOpp.cpp engine/Curve.cpp engine/Color.cpp engine/Light.cpp engine/TextureLoader.cpp engine/VBOManager.cpp common/Point2D.cpp engine/Model.cpp)
 
 if (WIN32)
 	target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} glut32 glew32 DevIL)
@@ -64,4 +64,4 @@ PROJECT(generator)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_executable(${PROJECT_NAME} common/Shape.cpp gerador/generator.cpp common/Point.cpp gerador/Bezier.cpp common/MatrixOpp.cpp)
+add_executable(${PROJECT_NAME} common/Shape.cpp gerador/generator.cpp common/Point.cpp gerador/Bezier.cpp common/MatrixOpp.cpp common/Point2D.cpp)

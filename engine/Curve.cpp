@@ -1,7 +1,6 @@
 #include "headers/Curve.h"
 #include <string.h>
 
-
 void getCatmullRomPoint(float t, float *p0, float *p1, float *p2, float *p3, float *pos, float *deriv) {
 
 	// catmull-rom matrix

@@ -6,6 +6,9 @@
 		<up x="0" y="1" z="0" />
 		<projection fov="60" near="30" far="20000" /> 
 	</camera>
+    <lights>
+        <light type="point" posX="0" posY="0" posZ="0"/>
+    </lights>
 	<group>
 		<!-- [> Sol <] -->
 		<group>
@@ -40,7 +43,15 @@
 				<scale x="4" y="4" z="4"/>
 			</transform>
 			<models>
-				<model name="Mercury" file="sphere.3d" />
+                <model name="Mercury" file="sphere.3d">
+                    <color>
+						<diffuse R="00" G="87" B="184" />
+						<ambient R="0" G="8" B="18" />
+						<specular R="255" G="255" B="255" />
+						<emissive R="0" G="0" B="0" />
+						<shininess value="128" />
+					</color>
+                </model>
 			</models>
 		</group>
 
@@ -87,7 +98,9 @@
 					<rotate time="0.1" x="0" y="1" z="0"/>
 				</transform>
 				<models>
-					<model name="Earth" file="sphere.3d" />
+                    <model name="Earth" file="sphere.3d">
+                        <texture file="earth.jpg"/>
+                    </model>
 				</models>
 			</group>
 			<!-- Lua -->
@@ -182,7 +195,7 @@
 					<rotate angle="30" x="1" y="0" z="0"/>
 				</transform>
 				<models>
-					<model file="saturnRing.3d"/>
+					<!-- <model file="saturnRing.3d"/> -->
 				</models>
 			</group>
 		</group>

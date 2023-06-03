@@ -52,7 +52,7 @@ void Shape::writeToFile (char *file)
 	for (Point ponto : this->normais)
 		f << ponto.getX() << "," << ponto.getY() << ", " << ponto.getZ() << "\n";
     for (Point2D ponto : this->coordsText)
-        f << ponto.getX() << " " << ponto.getY() << "\n";
+        f << ponto.getX() << ", " << ponto.getY() << "\n";
 
 	f.close();
 }
@@ -65,16 +65,6 @@ void Shape::setName(std::string name)
 void Shape::setFile(std::string file)
 {
 	this->file = file;
-}
-
-void Shape::setVBOStartIndex(int idx)
-{
-	this->vboStartIndex = idx;
-}
-
-void Shape::setVBOStopIndex(int idx)
-{
-	this->vboStopIndex = idx;
 }
 
 void Shape::normalizeNormals()
@@ -106,14 +96,4 @@ std::string Shape::getName()
 std::string Shape::getFile()
 {
 	return file;
-}
-
-int Shape::getVBOStartIndex()
-{
-	return vboStartIndex;
-}
-
-int Shape::getVBOStopIndex()
-{
-	return vboStopIndex;
 }

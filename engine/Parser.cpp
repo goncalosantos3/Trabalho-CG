@@ -1,9 +1,28 @@
 #include "headers/Parser.h"
-#include "headers/Transformation.h"
-#include "headers/rapidxml.hpp"
 
 using namespace std;
 using namespace rapidxml;
+
+
+Parser::~Parser()
+{
+    if (camera) delete camera;
+    
+    for (Light* l : lights)
+        delete l;
+    for (Group* g : groups)
+    {
+        if (g)
+            delete g;
+    }
+    for (Shape* s : allShapes)
+    {
+        if (s) 
+            delete s;
+    }
+    if (textureLoader) delete textureLoader;
+    if (vboManager) delete vboManager;
+}
 
 /** 
  * @brief Parse the window section of the xml input file
@@ -97,6 +116,114 @@ int Parser::parseCamera (xml_node<>* cameraNode)
 	}
 
 	return 0;
+}
+
+int Parser::parseLight(Light *light, rapidxml::xml_node<>* lightNode, int lightNum)
+{
+    if (!lightNode)
+        return 0;
+    LightType type;
+    Point pos, dir;
+    float cutoff = 0.0f;
+    xml_attribute<>* typeAttr = lightNode->first_attribute("type");
+    if (!typeAttr)
+    {
+        cerr << "Error: Light element should have a type attribute!" << endl;
+        return 1;
+    }
+    string t = string(typeAttr->value());
+    if (t == "point")
+        type = point;
+    else if (t == "directional")
+        type = directional;
+    else if (t == "spotlight" || t == "spot")
+        type = spotlight;
+    else
+    {
+        cerr << "Error: Light type should be 'point', 'directional' or 'spotlight'!" << endl;
+        return 1;
+    }
+
+    if (type == point || type == spotlight)
+    {
+        xml_attribute<> *posX = lightNode->first_attribute("posX"),
+                        *posY = lightNode->first_attribute("posY"),
+                        *posZ = lightNode->first_attribute("posZ");
+        if (!posX || !posY || !posZ)
+        {
+            
+            posX = lightNode->first_attribute("posx");
+            posY = lightNode->first_attribute("posy");
+            posZ = lightNode->first_attribute("posz");
+
+            if (!posX || !posY || !posZ)
+            {
+                cerr << "Error: light of type " << t << " should have posX, posY and poxZ attributes!" << endl;
+                return 1;
+            }
+        }
+        pos = Point(strtof(posX->value(), NULL),
+                    strtof(posY->value(), NULL), 
+                    strtof(posZ->value(), NULL));
+    }
+
+    if (type == directional || type == spotlight)
+    {
+        xml_attribute<> *dirX = lightNode->first_attribute("dirX"),
+                        *dirY = lightNode->first_attribute("dirY"),
+                        *dirZ = lightNode->first_attribute("dirZ");
+        if (!dirX || !dirY || !dirZ)
+        {
+            dirX = lightNode->first_attribute("dirx");
+            dirY = lightNode->first_attribute("diry");
+            dirZ = lightNode->first_attribute("dirz");
+            if (!dirX || !dirY || !dirZ)
+            {
+                cerr << "Error: light of type " << t << " should have dirX, dirY and dirZ attributes!" << endl;
+                return 1;
+            }
+        }
+        dir = Point(strtof(dirX->value(), NULL),
+                    strtof(dirY->value(), NULL), 
+                    strtof(dirZ->value(), NULL));
+    }
+
+    if (type == spotlight)
+    {
+        xml_attribute<> *cutoffAttr = lightNode->first_attribute("cutoff");
+
+        if (!cutoffAttr)
+        {
+            cerr << "Error: light of type spotlight should have cutoff attribute!" << endl;
+            return 1;
+        }
+
+        cutoff = strtof(cutoffAttr->value(), NULL);
+    }
+    
+    static vector<GLenum> l = vector<GLenum>({GL_LIGHT0, GL_LIGHT1, GL_LIGHT2, GL_LIGHT3, GL_LIGHT4, GL_LIGHT5, GL_LIGHT6, GL_LIGHT7});
+    *light = Light(type, pos, dir, cutoff, l[lightNum]);    
+    return 0;
+}
+
+int Parser::parseLights(std::vector<Light*>* lights, rapidxml::xml_node<>* lightsNode)
+{
+    if (!lightsNode)
+        return 0;
+    int i=0;
+    for (xml_node<>* lightNode = lightsNode->first_node("light") ; lightNode ; lightNode = lightNode->next_sibling("light"))
+    {
+        Light *light = (Light*)malloc(sizeof(Light));
+        int error = this->parseLight(light, lightNode, i++);
+        if (error)
+        {
+            delete light;
+            return error;
+        }
+        lights->push_back(light);
+    }
+
+    return 0;
 }
 
 Transformation* parseTranslation(xml_node<>* transformationNode)
@@ -224,20 +351,20 @@ int Parser::parseTransformations(vector<Transformation*>* transformations, xml_n
 	return 0;
 }
 
-int Parser::parseModel(Shape* model, string filename)
+int Parser::parseModel(Model* model, string filename)
 {
-	Shape* aux;
-	if ((aux = this->getModelFromModels(model->getName(), filename)))
+	Shape* aux, *shape = model->getShape();
+	if ((aux = this->getShapeFromShapes(shape->getName(), filename)))
 	{
 		if (aux->getFile() == "")
 		{
 			cerr << "Error: Only one Model can have the same \"name\" attribute!" << endl;
 			return 1;
 		}
-		if (model->getName() == aux->getName() && aux->getPoints().size() > 0)
+		if (shape->getName() == aux->getName() && aux->getPoints().size() > 0)
 		{
 			for (Point p : aux->getPoints())
-				model->addPoint(p);
+				shape->addPoint(p);
 			return 0;
 		}
 	}
@@ -267,11 +394,11 @@ int Parser::parseModel(Shape* model, string filename)
 		float x,y,z;
 		if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
 		{
-			cerr << "Error: model line number " << 2+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
+			cerr << "Error parsing vertex: model line number " << 2+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
 			return 1;
 		}
 
-		model->addPoint(Point(x,y,z));
+		shape->addPoint(Point(x,y,z));
 	}
 
 	for (int i=0 ; i<numVertices ; i++)
@@ -280,18 +407,128 @@ int Parser::parseModel(Shape* model, string filename)
 		float x,y,z;
 		if (sscanf(line.c_str(), "%f, %f, %f", &x, &y, &z) != 3)
 		{
-			cerr << "Error: model line number " << 2+numVertices+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
+			cerr << "Error parsing normal: model line number " << 2+numVertices+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
 			return 1;
 		}
 
-		model->addNormal(Point(x,y,z));
+		shape->addNormal(Point(x,y,z));
 	}
+
+    for (int i=0 ; i<numVertices ; i++)
+    {
+		getline(modelFile, line);
+		float x,y;
+		if (sscanf(line.c_str(), "%f, %f", &x, &y) != 2)
+		{
+			cerr << "Error parsing texture coord: model line number " << 2+numVertices*2+i << " has wrong syntax...(\"" << line << "\")\n Make sure the file was generated correctly..";
+			return 1;
+		}
+
+		shape->addTextCoords(Point2D(x,y));
+    }
 
 	return 0;
 }
 
+string Parser::parseTexture(xml_node<>* textureNode)
+{
+    if (!textureNode)
+        return "";
+    
+    xml_attribute<>* file = textureNode->first_attribute("file");
+    
+    if (!file)
+        return "";
+    return string(file->value());
+}
 
-int Parser::parseModels(vector<Shape*>* models, xml_node<>* modelsNode)
+int Parser::parseColor(xml_node<>* colorNode, class::Color *color)
+{
+    if (!colorNode)
+        return 0;
+
+    xml_node<>  *child = colorNode->first_node("diffuse");
+    if (child)
+    {
+        xml_attribute<> *r = child->first_attribute("R"),
+                        *g = child->first_attribute("G"),
+                        *b = child->first_attribute("B");
+        if (!r || !g || !b)
+        {
+            cerr << "Error: Diffuse color should have R, G and B attributes!" << endl;
+            return 1;
+        }
+        color->setDiffuse(Point(strtof(r->value(),NULL)/255.0f,
+                                strtof(g->value(), NULL)/255.0f,
+                                strtof(b->value(), NULL)/255.0f));
+    }
+    
+    child = colorNode->first_node("ambient");
+    if (child)
+    {
+        xml_attribute<> *r = child->first_attribute("R"),
+                        *g = child->first_attribute("G"),
+                        *b = child->first_attribute("B");
+        if (!r || !g || !b)
+        {
+            cerr << "Error: Ambient color should have R, G and B attributes!" << endl;
+            return 1;
+        }
+        color->setAmbient(Point(strtof(r->value(),NULL)/255.0f,
+                                strtof(g->value(), NULL)/255.0f,
+                                strtof(b->value(), NULL)/255.0f));
+    }
+
+    child = colorNode->first_node("specular");
+    if (child)
+    {
+        xml_attribute<> *r = child->first_attribute("R"),
+                        *g = child->first_attribute("G"),
+                        *b = child->first_attribute("B");
+        if (!r || !g || !b)
+        {
+            cerr << "Error: Specular color should have R, G and B attributes!" << endl;
+            return 1;
+        }
+        float R = strtof(r->value(), NULL),
+              G = strtof(g->value(), NULL),
+              B = strtof(b->value(), NULL);
+        color->setSpecular(Point(R, G, B)/255.0f);
+    }
+
+    child = colorNode->first_node("emissive");
+    if (child)
+    {
+        xml_attribute<> *r = child->first_attribute("R"),
+                        *g = child->first_attribute("G"),
+                        *b = child->first_attribute("B");
+        if (!r || !g || !b)
+        {
+            cerr << "Error: Emissive color should have R, G and B attributes!" << endl;
+            return 1;
+        }
+        float R = strtof(r->value(), NULL),
+              G = strtof(g->value(), NULL),
+              B = strtof(b->value(), NULL);
+        color->setEmissive(Point(R,G,B)/255.0f);
+    }
+
+    child = colorNode->first_node("shininess");
+    if (child)
+    {
+        xml_attribute<>* value = child->first_attribute("value");
+        if (!value)
+        {
+            cerr << "Error: Shininess should have value attribute!" << endl;
+            return 1;
+        }
+        color->setShininess(strtof(value->value(), NULL));
+    }
+
+    return 0;
+}
+
+int Parser::parseModels(vector<Model*>* models, xml_node<>* modelsNode)
 {
 	if (!modelsNode)
 		return 0;
@@ -310,7 +547,18 @@ int Parser::parseModels(vector<Shape*>* models, xml_node<>* modelsNode)
 				name = nameAttr->value();
 			else
 				name = "";
-			Shape* model = new Shape(string(name), string(filename));
+			Shape* shape = new Shape(string(name), string(filename));
+
+            string texture = this->parseTexture(model->first_node("texture"));
+            class::Color color;
+            
+            if (this->parseColor(model->first_node("color"), &color))
+            {
+                cerr << "Error parsing color" << endl;
+                return 1;
+            }
+
+            Model *model = new Model(shape, color, texture, textureLoader, vboManager); 
 
 			int error = this->parseModel(model, filename);
 			if (error)
@@ -319,7 +567,7 @@ int Parser::parseModels(vector<Shape*>* models, xml_node<>* modelsNode)
 				return error;
 			}
 			models->push_back(model);
-			this->allModels.push_back(model);;
+			this->allShapes.push_back(shape);;
 	}
 	return 0;
 }
@@ -338,7 +586,7 @@ int Parser::parseGroup(Group* group, xml_node<>* groupNode)
 	group->addTransformations(transformations);
 
 	xml_node<>* modelsNode = groupNode->first_node("models");
-	vector<Shape*> models;
+	vector<Model*> models;
 	error = this->parseModels(&models, modelsNode);
 	if (error)
 	{
@@ -346,6 +594,7 @@ int Parser::parseGroup(Group* group, xml_node<>* groupNode)
 		return error;
 	}
 	group->addModels(models);
+    group->generateVBOs();
 
 	vector<Group*> groups;
 	error = this->parseGroups(&groups, groupNode);
@@ -399,6 +648,10 @@ int Parser::parseXML(char *filePath)
 
 	int rv = this->parseWindow(root_node->first_node("window"));
 	rv = rv | this->parseCamera(root_node->first_node("camera"));
+    
+    vector<Light*> lights;
+    rv = rv | this->parseLights(&lights, root_node->first_node("lights"));
+    this->lights = lights;
 
 	vector<Group*> groups;
 	rv = rv | this->parseGroups(&groups, root_node);
@@ -412,18 +665,18 @@ int Parser::parseXML(char *filePath)
 	return 0;
 }
 
-Shape* Parser::getModelFromModels(std::string name, std::string file)
+Shape* Parser::getShapeFromShapes(std::string name, std::string file)
 {
 	if (name == "")
 	{
-		for (Shape* s : allModels)
+		for (Shape* s : allShapes)
 			if (s->getFile() == file)
 				return s;
 		return new Shape(name, file);
 	}
 	Shape* found = NULL;
 	bool sameName = false;
-	for (Shape* s : allModels)
+	for (Shape* s : allShapes)
 	{
 		if (s->getName() == name)
 			return new Shape();
@@ -443,12 +696,17 @@ Camera* Parser::getCamera()
 	return this->camera;
 }
 
+vector<Light*> Parser::getLights()
+{
+    return lights;
+}
+
 vector<Group*> Parser::getGroups()
 {
 	return groups;
 }
 
-vector<Shape*> Parser::getModels()
+vector<Shape*> Parser::getShapes()
 {
-	return allModels;
+	return allShapes;
 }
