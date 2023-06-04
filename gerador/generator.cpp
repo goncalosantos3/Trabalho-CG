@@ -294,7 +294,7 @@ void geraCone(float radius, float height, int slices, int stacks, char * file){
         forma->addTextCoords(Point2D(0.5, 0.5));
 		forma->addPoint(Point(radius * sin(alfainc),0, radius * cos(alfainc)));
 		forma->addNormal(Point(0,-1,0));
-        forma->addTextCoords(Point2D(0.5+cos(alfainc), 0.5+sin(alfainc)));
+        forma->addTextCoords(Point2D(0.5+0.5*cos(alfainc), 0.5+0.5*sin(alfainc)));
 		forma->addPoint(Point(radius * sin(alfainc-alfa),0,radius * cos(alfainc-alfa)));
 		forma->addNormal(Point(0,-1,0));
         forma->addTextCoords(Point2D(0.5+0.5*cos(alfainc-alfa), 0.5+0.5*sin(alfainc-alfa)));
@@ -363,10 +363,10 @@ void geraEsfera(float radius, int slices, int stacks, char *file) {
 						p2 = Point(radius * cos(beta) * sin(alpha + alphainc), radius * sin(beta), radius * cos(beta) * cos(alpha + alphainc)),
 						p3 = Point(radius * cos(beta + betainc) * sin(alpha), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha)),
 						p4 = Point(radius * cos(beta + betainc) * sin(alpha + alphainc), radius * sin(beta + betainc), radius * cos(beta + betainc) * cos(alpha + alphainc));
-            Point2D t1 = Point2D((j+0)*sInc, (i+0)*tInc),
-                    t2 = Point2D((j+1)*sInc, (i+0)*tInc),
-                    t3 = Point2D((j+0)*sInc, (i+1)*tInc),
-                    t4 = Point2D((j+1)*sInc, (i+1)*tInc);
+            Point2D t1 = Point2D((1.0 / (2.0*M_PI)) * (-alpha) + 1.0, (1.0 / (M_PI)) * (beta + (M_PI / 2.0))),
+                    t2 = Point2D((1.0 / (2.0*M_PI)) * (-alpha-alphainc) + 1.0, (1.0 / (M_PI)) * (beta + (M_PI / 2.0))),
+                    t3 = Point2D((1.0 / (2.0*M_PI)) * (-alpha) + 1.0, (1.0 / (M_PI)) * (beta + betainc + (M_PI / 2.0))),
+                    t4 = Point2D((1.0 / (2.0*M_PI)) * (-alpha-alphainc) + 1.0, (1.0 / (M_PI)) * (beta + betainc + (M_PI / 2.0)));
 
 			forma->addPoint(p1);
 			forma->addNormal(p1);

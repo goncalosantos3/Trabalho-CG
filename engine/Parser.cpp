@@ -37,6 +37,7 @@ int Parser::parseWindow (xml_node<>* windowNode)
 
 	this->window = pair<float, float>(strtod(width->value(), NULL), strtod(height->value(),NULL));
 	
+
 	return 0;
 }
 
@@ -221,6 +222,11 @@ int Parser::parseLights(std::vector<Light*>* lights, rapidxml::xml_node<>* light
             return error;
         }
         lights->push_back(light);
+        if (lights->size() >= 8)
+        {
+            cerr << "Warning: World should have a max of 8 lights.. Any more than that will be ignored.." << endl;
+            break;
+        }
     }
 
     return 0;

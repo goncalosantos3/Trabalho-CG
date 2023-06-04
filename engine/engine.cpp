@@ -109,7 +109,6 @@ unsigned char  picking(int x, int y) {
 	else
 		glPolygonMode(GL_FRONT, GL_LINE);
 
-    printf("%d %d %d\n", res[0], res[1], res[2]);
 	return res[0];
 }
 
@@ -180,20 +179,14 @@ void renderScene(void)
     glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 		// X axis in red
-        // float red[4] = {1.0f, 0.0f, 0.0f};
-        // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, red);
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glVertex3f(-1000000.0f, 0.0f, 0.0f);
 		glVertex3f(1000000.0f, 0.0f, 0.0f);
 		// Y Axis in Green
-        // float green[4] = {0.0f, 1.0f, 0.0f};
-        // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, green);
 		glColor3f(0.0f, 1.0f, 0.0f);
 		glVertex3f(0.0f, -1000000.0f, 0.0f);
 		glVertex3f(0.0f, 1000000.0f, 0.0f);
 		// Z Axis in Blue
-        // float blue[4] = {0.0f, 0.0f, 1.0f};
-        // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blue);
 		glColor3f(0.0f, 0.0f, 1.0f);
 		glVertex3f(0.0f, 0.0f, -1000000.0f);
 		glVertex3f(0.0f, 0.0f, 1000000.0f);
@@ -222,7 +215,6 @@ void renderScene(void)
 		snprintf(title, 256, "%s %f", initialTitle, fps);
 		glutSetWindowTitle(title);
 	}
-	// printf("inc : %f, %f %f\n", 1.0f/updatesPerSec, timePassed - transfBaseTime, 1000.0f / updatesPerSec);
 	if (timePassed - transfBaseTime >= 1000.0f / updatesPerSec)
 	{
 		transfTime += 1.0f/updatesPerSec;
@@ -258,6 +250,7 @@ void changeSize(int ww, int hh)
 
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
+    glutPostRedisplay();
 }
 
 
@@ -435,10 +428,9 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
+	glPolygonMode(GL_FRONT, GL_FILL);
 	glutInitWindowSize(window.first, window.second);
 	glutCreateWindow(argv[1]);
-	glPolygonMode(GL_FRONT, GL_FILL);
-
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutIdleFunc(idle);
@@ -452,6 +444,7 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(processNormalKeys);
 	glutMouseFunc(processMouseButtons);
 	glutMotionFunc(processMouseMotion);
+
 
 	Parser parser;
 
@@ -471,10 +464,7 @@ int main(int argc, char **argv)
 
 	printf("Instructions:\n\tMove with the 'W', 'A', 'S' and 'D' keys\n\tMove the camera with the arrow keys or with the mouse\n\tIncrease/Decrease camera Speed: 'Z'/'X'\n\tSelect a model by pointing and pressing wither middle mouse button or 'P'\n");
 
-
-	// #ifndef __APPLE__
-	// glewInit();
-	// #endif
+    glutReshapeWindow(window.first, window.second);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);

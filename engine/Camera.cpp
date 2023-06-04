@@ -110,17 +110,17 @@ void Camera::calculateAngles()
                   powf(position->getZ() - lookAt->getZ(),2));
 
     float x = position->getX(), y = position->getY(), z = position->getZ();
-    float iterations = 360,
+    float iterations = 3600,
           angle = M_PI * 2 / iterations, 
           closestY = 0.0f,
           closestXZ = 0.0f,
           closestDeltaY = abs(y - radius*cos(closestY) - lookAt->getY()),
-          closestDeltaXZ =abs(x + radius*sin(closestXZ) - lookAt->getX() + z + radius*cos(closestXZ) - lookAt->getZ());
+          closestDeltaXZ =abs(abs(x + radius*sin(closestXZ) - lookAt->getX()) + abs(z + radius*cos(closestXZ) - lookAt->getZ()));
     for (int i=1 ; i<iterations ; i++)
     {
         float aux = angle*i, 
               auxDeltaY = abs(y - radius * cos(aux) - lookAt->getY()), 
-              auxDeltaXZ = abs(x + radius*sin(aux) - lookAt->getX() + z +  radius*cos(aux) - lookAt->getZ());
+              auxDeltaXZ = abs(abs(x + radius*sin(aux) - lookAt->getX()) + abs(z +  radius*cos(aux) - lookAt->getZ()));
         if (aux > -M_PI && aux < M_PI && auxDeltaY < closestDeltaY)
         {
             closestDeltaY = auxDeltaY;

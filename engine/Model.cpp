@@ -25,8 +25,6 @@ void Model::drawPicking(vector<Shape*> codes)
     string shapeFile = shape->getFile();
     float color = getShapeColorCode(codes, shape->getName(), shape->getFile())/255.0f;
 
-    printf("%f\n", color);
-
     glColor3f(color, 0.0f, 0.0f);
     // bind dos pontos
     glBindBuffer(GL_ARRAY_BUFFER, vboManager->getPointsVBOID(shapeFile));
@@ -56,10 +54,6 @@ void Model::draw()
     if (textureFile != "")
     {
         int texID = textureLoader->getTextureID(textureFile);
-        // float white[4] = { 1,1,1,1 },
-        //       black[4] = { 0,0,0,1 };
-        // glMaterialfv(GL_FRONT, GL_DIFFUSE, white);
-        // glMaterialfv(GL_FRONT, GL_AMBIENT, black);
         glBindTexture(GL_TEXTURE_2D, texID);
     }
 
