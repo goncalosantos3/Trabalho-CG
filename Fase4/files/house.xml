@@ -1,0 +1,30 @@
+<world>
+	<window width="800" height="800" />
+	<camera> 
+		<position x="5" y="5" z="30" />
+		<lookAt x="0" y="0" z="13" />
+		<up x="0" y="1" z="0" />
+		<projection fov="45" near="1" far="1000" /> 
+	</camera>
+	<group>
+		<transform>
+			<!-- <translate x="0" y="5" z="0"/> -->
+			<color r="255" g="255" b="255"/>
+		</transform>
+		<models>
+			<!-- <model file="cube.3d" name="estrutura"/> -->
+			<model file="washer2.3d" name="anel"/>
+		</models>
+		<!-- <group> -->
+			<!-- <transform> -->
+				<!-- <translate x="0" y="3" z="0"/> -->
+				<!-- <rotate angle="45" x="0" y="1" z="0"/> -->
+				<!-- <scale x="1" y="0.75" z="1"/> -->
+				<!-- <color r="0.58" g="0.29411" b="0.0"/> -->
+			<!-- </transform> -->
+			<!-- <models> -->
+				<!-- <model file="roof.3d" name="telhado"/> -->
+			<!-- </models> -->
+		<!-- </group> -->
+	</group>
+</world>
