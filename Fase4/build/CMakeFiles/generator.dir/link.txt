@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/generator.dir/common/Shape.cpp.o CMakeFiles/generator.dir/gerador/generator.cpp.o CMakeFiles/generator.dir/common/Point.cpp.o CMakeFiles/generator.dir/gerador/Bezier.cpp.o CMakeFiles/generator.dir/common/MatrixOpp.cpp.o CMakeFiles/generator.dir/common/Point2D.cpp.o -o generator  /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/x86_64-linux-gnu/libIL.so 

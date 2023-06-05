@@ -1,0 +1,4 @@
+/home/tbag/Universidade/3Ano/2Sem/CG/Fase3/build/CMakeFiles/engine.dir
+/home/tbag/Universidade/3Ano/2Sem/CG/Fase3/build/CMakeFiles/generator.dir
+/home/tbag/Universidade/3Ano/2Sem/CG/Fase3/build/CMakeFiles/edit_cache.dir
+/home/tbag/Universidade/3Ano/2Sem/CG/Fase3/build/CMakeFiles/rebuild_cache.dir
